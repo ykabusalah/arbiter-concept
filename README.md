@@ -9,7 +9,8 @@ Arbiter uses local language models to deliver responsive conversations without s
 ## Project Structure
 
 - `index.html` – landing page markup
-- `assets/css/styles.css` – site-wide styling
+- `assets/css/styles.css` – site-wide styling and animations
+- `assets/js/main.js` – IntersectionObserver for scroll animations
 - `assets/images/` – logo and team headshots
 
 ## Development
