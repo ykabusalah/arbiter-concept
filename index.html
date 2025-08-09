@@ -621,7 +621,7 @@
     
         /* Logo image */
         .logo-img {
-            height: 28px;
+            height: 48px;
             width: auto;
             display: block;
         }
@@ -903,5 +903,30 @@
             observer.observe(el);
         });
     </script>
+
+<section id="beta" class="beta-section">
+  <h2>Join the TestFlight Beta</h2>
+  <form id="beta-form">
+    <input type="email" name="email" placeholder="Email*" required>
+    <input type="text" name="full_name" placeholder="Name (optional)">
+    <select name="device">
+      <option value="iPhone">iPhone</option>
+      <option value="iPad">iPad</option>
+      <option value="Unknown">Prefer not to say</option>
+    </select>
+    <input type="text" name="country" placeholder="Country">
+    <input type="text" name="referral" placeholder="How did you hear about us?">
+    <textarea name="notes" placeholder="Anything you'd like to add?"></textarea>
+    <label>
+      <input type="checkbox" name="consent" required> I agree to receive a TestFlight invite if selected.
+    </label>
+    <button type="submit">Request Invite</button>
+    <p id="beta-success" style="color: green; display: none;">Thanks! You're on the list.</p>
+    <p id="beta-error" style="color: red; display: none;"></p>
+  </form>
+</section>
+
+<script type="module" src="beta.js"></script>
+
 </body>
 </html>
