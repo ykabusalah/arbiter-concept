@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbiter - Private AI on Your Device</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --purple: #6B46C1;
+            --purple-dark: #553C9A;
+            --purple-light: #9F7AEA;
+            --purple-lighter: #E9D8FD;
+            --purple-lightest: #FAF5FF;
+            --white: #FFFFFF;
+            --gray-medium: #6B7280;
+            --gray-light: #9CA3AF;
+            --border-light: #E9D8FD;
+            --bg-light: #FAF5FF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--white);
+            color: var(--purple-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Sketch container for parallax effect */
+        .sketches-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Sketch placeholders with floating animation */
+        .sketch {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease-out;
+        }
+
+        .sketch-planet {
+            border-radius: 50%;
+            position: relative;
+            overflow: visible;
+        }
+
+        /* Planet styles with rings and details */
+        .planet-surface {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            border: 1px solid var(--purple-lighter);
+            background: 
+                radial-gradient(circle at 30% 30%, transparent 20%, rgba(107, 70, 193, 0.03) 50%),
+                linear-gradient(180deg, transparent 20%, rgba(107, 70, 193, 0.04) 40%, transparent 60%, rgba(107, 70, 193, 0.03) 80%);
+            overflow: hidden;
+        }
+
+        /* Crater details */
+        .planet-surface::before,
+        .planet-surface::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(107, 70, 193, 0.1);
+        }
+
+        .planet-surface::before {
+            width: 20%;
+            height: 20%;
+            top: 25%;
+            left: 60%;
+        }
+
+        .planet-surface::after {
+            width: 15%;
+            height: 15%;
+            top: 50%;
+            left: 30%;
+        }
+
+        /* Saturn-like rings */
+        .planet-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(65deg);
+            width: 150%;
+            height: 150%;
+            border: 1px solid var(--purple-lighter);
+            border-radius: 50%;
+            background: transparent;
+        }
+
+        .planet-ring-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(65deg);
+            width: 130%;
+            height: 130%;
+            border: 1px solid rgba(107, 70, 193, 0.15);
+            border-radius: 50%;
+        }
+
+        /* Left side sketches */
+        .sketch-1 {
+            width: 200px;
+            height: 200px;
+            left: 5%;
+            top: 15%;
+        }
+
+        .sketch-2 {
+            width: 150px;
+            height: 150px;
+            left: 8%;
+            top: 45%;
+        }
+
+        .sketch-3 {
+            width: 180px;
+            height: 180px;
+            left: 3%;
+            top: 70%;
+        }
+
+        /* Right side sketches */
+        .sketch-4 {
+            width: 220px;
+            height: 220px;
+            right: 5%;
+            top: 10%;
+        }
+
+        .sketch-5 {
+            width: 160px;
+            height: 160px;
+            right: 8%;
+            top: 35%;
+        }
+
+        .sketch-6 {
+            width: 190px;
+            height: 190px;
+            right: 4%;
+            top: 60%;
+        }
+
+        .sketch-7 {
+            width: 140px;
+            height: 140px;
+            right: 10%;
+            top: 85%;
+        }
+
+        /* Comet sketches */
+        .sketch-comet {
+            position: relative;
+        }
+
+        .comet-body {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid var(--purple-lighter);
+            background: radial-gradient(circle at 40% 40%, rgba(107, 70, 193, 0.03), rgba(107, 70, 193, 0.08));
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .comet-tail {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--purple-lighter) 0%, transparent 100%);
+        }
+
+        .comet-tail::before,
+        .comet-tail::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 150px;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(107, 70, 193, 0.2) 0%, transparent 100%);
+        }
+
+        .comet-tail::before {
+            top: -8px;
+            transform: rotate(-5deg);
+        }
+
+        .comet-tail::after {
+            bottom: -8px;
+            transform: rotate(5deg);
+        }
+
+        .sketch-comet-1 {
+            width: 250px;
+            height: 60px;
+            left: 2%;
+            top: 30%;
+            transform: rotate(-15deg);
+        }
+
+        .sketch-comet-2 {
+            width: 250px;
+            height: 60px;
+            right: 3%;
+            top: 50%;
+            transform: rotate(165deg);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            padding: 1.5rem 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--purple);
+            font-size: 1.25rem;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border: 2px solid var(--purple);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: var(--purple-lightest);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--gray-medium);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .nav-links a:hover {
+            color: var(--purple);
+        }
+
+        /* Main content wrapper */
+        .main-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 3rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 0 4rem;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 6vw, 4.5rem);
+            font-weight: 300;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            color: var(--purple);
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--gray-medium);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
+        /* Beta Form */
+        .beta-section {
+            margin-bottom: 2rem;
+        }
+
+        .beta-label {
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--purple);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .beta-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .beta-form input {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            border: 1px solid var(--border-light);
+            background: var(--white);
+            color: var(--purple-dark);
+            font-size: 1rem;
+            font-weight: 300;
+            transition: border-color 0.2s ease;
+        }
+
+        .beta-form input::placeholder {
+            color: var(--gray-light);
+        }
+
+        .beta-form input:focus {
+            outline: none;
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
+        }
+
+        .btn-primary {
+            padding: 1rem 2rem;
+            background: var(--purple);
+            color: var(--white);
+            border: 1px solid var(--purple);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            background: var(--purple-dark);
+            border-color: var(--purple-dark);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 0;
+            border-top: 1px solid var(--border-light);
+            background: var(--white);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 4rem;
+            letter-spacing: -0.02em;
+            text-align: center;
+            color: var(--purple);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 4rem 3rem;
+        }
+
+        .feature {
+            position: relative;
+            text-align: center;
+        }
+
+        .feature h3 {
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+            color: var(--purple-dark);
+        }
+
+        .feature p {
+            color: var(--gray-medium);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Mission Section */
+        .mission {
+            padding: 8rem 0;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-light);
+        }
+
+        .mission-content {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            font-weight: 300;
+            color: var(--purple-dark);
+            text-align: center;
+        }
+
+        /* Team Section */
+        .team {
+            padding: 8rem 0;
+            border-top: 1px solid var(--border-light);
+            background: var(--white);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .team-member {
+            text-align: center;
+        }
+
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            border: 1px dashed var(--purple-lighter);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--purple-lighter);
+            font-size: 0.7rem;
+            background: var(--bg-light);
+        }
+
+        .team-member h3 {
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 0.25rem;
+            color: var(--purple-dark);
+        }
+
+        .team-member .role {
+            color: var(--gray-medium);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .team-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .team-links a {
+            color: var(--purple);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .team-links a:hover {
+            color: var(--purple-dark);
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 8rem 0;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-light);
+        }
+
+        .faq-placeholder {
+            color: var(--gray-medium);
+            font-style: italic;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+            background: var(--white);
+        }
+
+        footer p {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            .nav-container {
+                padding: 0 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            
+            .beta-form {
+                flex-direction: column;
+            }
+
+            .sketch {
+                opacity: 0.3;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Subtle animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Floating animation for sketches */
+        @keyframes float-up {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes float-down {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .float-up {
+            animation: float-up 4s ease-in-out infinite;
+        }
+
+        .float-down {
+            animation: float-down 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating sketches container -->
+    <div class="sketches-container" id="sketchContainer">
+        <!-- Left side sketches -->
+        <div class="sketch sketch-planet sketch-1 float-up">
+            <div class="planet-surface"></div>
+        </div>
+        
+        <div class="sketch sketch-planet sketch-2 float-down" style="animation-delay: 0.5s;">
+            <div class="planet-surface">
+                <div class="planet-ring"></div>
+            </div>
+        </div>
+        
+        <div class="sketch sketch-planet sketch-3 float-up" style="animation-delay: 1s;">
+            <div class="planet-surface"></div>
+        </div>
+        
+        <!-- Right side sketches -->
+        <div class="sketch sketch-planet sketch-4 float-down">
+            <div class="planet-surface">
+                <div class="planet-ring"></div>
+                <div class="planet-ring-inner"></div>
+            </div>
+        </div>
+        
+        <div class="sketch sketch-planet sketch-5 float-up" style="animation-delay: 0.7s;">
+            <div class="planet-surface"></div>
+        </div>
+        
+        <div class="sketch sketch-planet sketch-6 float-down" style="animation-delay: 1.2s;">
+            <div class="planet-surface"></div>
+        </div>
+        
+        <div class="sketch sketch-planet sketch-7 float-up" style="animation-delay: 1.5s;">
+            <div class="planet-surface">
+                <div class="planet-ring"></div>
+            </div>
+        </div>
+        
+        <!-- Comet sketches -->
+        <div class="sketch sketch-comet sketch-comet-1 float-up" style="animation-delay: 0.3s;">
+            <div class="comet-body"></div>
+            <div class="comet-tail"></div>
+        </div>
+        
+        <div class="sketch sketch-comet sketch-comet-2 float-down" style="animation-delay: 0.8s;">
+            <div class="comet-body"></div>
+            <div class="comet-tail"></div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-container">
+                <a href="#" class="logo">
+                    <div class="logo-icon">⚖</div>
+                    <span>Arbiter</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#mission">Mission</a></li>
+                    <li><a href="#team">Team</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content fade-in">
+                    <h1>Fast, private AI chat on your device</h1>
+                    <p class="tagline">
+                        Run powerful language models locally. Keep your conversations private. 
+                        Switch between models without reinstalling.
+                    </p>
+                    
+                    <div class="beta-section">
+                        <label class="beta-label">Join the TestFlight Beta</label>
+                        <form class="beta-form">
+                            <input type="email" placeholder="you@example.com" required>
+                            <button type="submit" class="btn-primary">Request Invite</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" id="features">
+            <div class="container">
+                <h2 class="section-title">Key Features</h2>
+                <div class="features-grid">
+                    <div class="feature">
+                        <h3>Flexible Model Management</h3>
+                        <p>Download and switch between on-device AI models like LLaMA and Whisper. Add new models without reinstalling the app.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h3>Private, Persistent Conversations</h3>
+                        <p>All chats are stored locally for full privacy and ownership. Conversations are searchable and exportable.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h3>Hybrid Inference Engine</h3>
+                        <p>Run AI entirely on-device by default for speed and privacy, with the option to switch to cloud APIs for more power.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h3>Real-Time Search Augmentation</h3>
+                        <p>Integrate fresh web results directly into your conversations for up-to-the-minute insights and updates.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h3>Multimodal Input & Accessibility</h3>
+                        <p>Speak to Arbiter with voice-to-text, and soon listen with text-to-speech—ideal for accessibility and multitasking.</p>
+                    </div>
+
+                    <div class="feature">
+                        <h3>Open Source Foundation</h3>
+                        <p>Built on open standards and protocols. Contribute to the future of private AI or build your own extensions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission Section -->
+        <section class="mission" id="mission">
+            <div class="container">
+                <h2 class="section-title">Our Mission</h2>
+                <div class="mission-content">
+                    <p>Arbiter is redefining the future of AI chat. We believe in empowering individuals and organizations with tools that offer choice, control, and clarity. By running AI locally and giving users ownership of their data, Arbiter puts privacy and power back into your hands.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="team" id="team">
+            <div class="container">
+                <h2 class="section-title">Team</h2>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="team-avatar">Photo</div>
+                        <h3>Jordan Stone</h3>
+                        <p class="role">Founder</p>
+                        <div class="team-links">
+                            <a href="#">LinkedIn</a>
+                            <a href="mailto:jordan@example.com">Email</a>
+                        </div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <div class="team-avatar">Photo</div>
+                        <h3>Yousef Abu Salah</h3>
+                        <p class="role">Engineering</p>
+                        <div class="team-links">
+                            <a href="#">LinkedIn</a>
+                            <a href="mailto:yousef@example.com">Email</a>
+                        </div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <div class="team-avatar">Photo</div>
+                        <h3>Harpreet Singh</h3>
+                        <p class="role">Product</p>
+                        <div class="team-links">
+                            <a href="#">LinkedIn</a>
+                            <a href="mailto:harpreet@example.com">Email</a>
+                        </div>
+                    </div>
+                    
+                    <div class="team-member">
+                        <div class="team-avatar">Photo</div>
+                        <h3>Smith Patel</h3>
+                        <p class="role">Design</p>
+                        <div class="team-links">
+                            <a href="#">LinkedIn</a>
+                            <a href="mailto:smith@example.com">Email</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq" id="faq">
+            <div class="container">
+                <h2 class="section-title">FAQ</h2>
+                <p class="faq-placeholder">Frequently asked questions will appear here.</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer id="contact">
+            <div class="container">
+                <p>© 2025 Arbiter Technologies. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Parallax effect for sketches
+        let sketches = document.querySelectorAll('.sketch');
+        
+        window.addEventListener('scroll', () => {
+            let scrolled = window.pageYOffset;
+            let rate = scrolled * -0.2;
+            
+            sketches.forEach((sketch, index) => {
+                let speed = index % 2 === 0 ? 0.15 : 0.25;
+                let yPos = -(scrolled * speed);
+                sketch.style.transform = `translateY(${yPos}px)`;
+            });
+        });
+
+        // Form submission
+        document.querySelector('.beta-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = e.target.querySelector('input[type="email"]').value;
+            alert(`Thank you for your interest! We'll contact you at ${email} when beta access is available.`);
+            e.target.reset();
+        });
+
+        // Simple fade in on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature, .team-member').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
