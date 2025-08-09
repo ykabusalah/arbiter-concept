@@ -618,6 +618,26 @@
         .float-down {
             animation: float-down 4s ease-in-out infinite;
         }
+    
+        /* Logo image */
+        .logo-img {
+            height: 28px;
+            width: auto;
+            display: block;
+        }
+
+        /* Team photos */
+        .team-photo {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-light);
+            margin: 0 auto 1.5rem;
+            display: block;
+            background: var(--bg-light);
+        }
+
     </style>
 </head>
 <body>
@@ -678,7 +698,7 @@
         <nav>
             <div class="nav-container">
                 <a href="#" class="logo">
-                    <div class="logo-icon">⚖</div>
+                    <img class="logo-img" src="assets/logo.png" alt="Arbiter logo">
                     <span>Arbiter</span>
                 </a>
                 <ul class="nav-links">
@@ -766,7 +786,7 @@
                 <h2 class="section-title">Team</h2>
                 <div class="team-grid">
                     <div class="team-member">
-                        <div class="team-avatar">Photo</div>
+                        <img class="team-photo" src="assets/jordan-stone.jpg" alt="Headshot of Jordan Stone">
                         <h3>Jordan Stone</h3>
                         <p class="role">Founder</p>
                         <div class="team-links">
@@ -776,7 +796,7 @@
                     </div>
                     
                     <div class="team-member">
-                        <div class="team-avatar">Photo</div>
+                        <img class="team-photo" src="assets/yousef-abu-salah.jpg" alt="Headshot of Yousef Abu-Salah">
                         <h3>Yousef Abu Salah</h3>
                         <p class="role">Engineering</p>
                         <div class="team-links">
@@ -786,7 +806,7 @@
                     </div>
                     
                     <div class="team-member">
-                        <div class="team-avatar">Photo</div>
+                        <img class="team-photo" src="assets/harpreet-singh.jpg" alt="Headshot of Harpreet Singh">
                         <h3>Harpreet Singh</h3>
                         <p class="role">Product</p>
                         <div class="team-links">
@@ -796,7 +816,7 @@
                     </div>
                     
                     <div class="team-member">
-                        <div class="team-avatar">Photo</div>
+                        <img class="team-photo" src="assets/smith-patel.jpg" alt="Headshot of Smith Patel">
                         <h3>Smith Patel</h3>
                         <p class="role">Design</p>
                         <div class="team-links">
