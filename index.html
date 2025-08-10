@@ -1520,7 +1520,7 @@
             }
         }
 
-        // Form submission with Supabase integration
+        // Form submission with Supabase integration - FIXED VERSION
         async function handleFormSubmit(event) {
             console.log('Form submitted');
             event.preventDefault();
@@ -1539,6 +1539,8 @@
                 const name = formData.get('full_name').trim();
                 const email = formData.get('email').trim();
                 
+                console.log('Form data:', { name, email });
+                
                 // Basic validation
                 if (!name) {
                     errorMsg.textContent = 'Please enter your name.';
@@ -1552,37 +1554,50 @@
                     return;
                 }
 
+                console.log('Loading Supabase...');
+                
                 // Load Supabase and submit to database
                 const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+                console.log('Supabase library loaded');
+                
                 const supabase = createClient(
                     'https://swxehqxiqyyyjbsekkwa.supabase.co',
                     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3eGVocXhpcXl5eWpic2Vra3dhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NzUwMzQsImV4cCI6MjA3MDM1MTAzNH0.7ivEWvbnLsOgt8MnKATO6BxWJPfxZn336GE0n_Kwq5s'
                 );
+                console.log('Supabase client created');
 
+                console.log('Attempting to insert only essential fields...');
+
+                // Insert only the essential fields - FIXED VERSION
                 const { data, error } = await supabase
                     .from('beta_signups')
                     .insert([{
                         full_name: name,
-                        email: email,
-                        device: null,  // Will be null for web signups
-                        country: null, // Could add IP-based detection later
-                        referral: null, // Could add referral tracking later  
-                        notes: 'Web signup from landing page',
-                        consent: true,
-                        inserted_at: new Date().toISOString()
+                        email: email
+                        // Let database auto-generate: id, inserted_at
                     }])
                     .select('id,email,inserted_at')
                     .single();
 
+                console.log('Supabase response:', { data, error });
+
                 if (error) {
-                    console.error('Supabase error:', error);
+                    console.error('Supabase error details:', {
+                        message: error.message,
+                        code: error.code,
+                        details: error.details,
+                        hint: error.hint
+                    });
                     
                     if (error.code === '23505') {
                         errorMsg.textContent = 'Oops! You\'ve already submitted.';
                     } else if (error.code === 'PGRST116') {
-                        errorMsg.textContent = 'Signup temporarily disabled. Please try again later.';
+                        errorMsg.textContent = 'Signup blocked by security policy. Check RLS policies in Supabase.';
+                    } else if (error.message.includes('row-level security')) {
+                        errorMsg.textContent = 'Database security error. Please contact support.';
                     } else {
-                        errorMsg.textContent = 'Something went wrong. Please try again.';
+                        // Show the actual error for debugging
+                        errorMsg.textContent = `Error: ${error.message} (Code: ${error.code || 'unknown'})`;
                     }
                     errorMsg.style.display = 'block';
                     return;
@@ -1595,9 +1610,14 @@
                 form.reset();
                 
             } catch (error) {
-                console.error('Unexpected error:', error);
+                console.error('Unexpected error details:', {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                });
+                
                 const errorMsg = document.getElementById('beta-error');
-                errorMsg.textContent = 'Network error. Please check your connection and try again.';
+                errorMsg.textContent = `Network error: ${error.message}`;
                 errorMsg.style.display = 'block';
             }
         }
