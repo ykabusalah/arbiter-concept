@@ -309,7 +309,7 @@
             border-color: var(--purple-dark);
         }
 
-        /* Slideshow Section */
+        /* Slideshow Section - FIXED VERSION */
         .slideshow-section {
             margin: 4rem 0;
             text-align: center;
@@ -341,28 +341,80 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 3rem 2rem;
+            padding: 2rem;
             background: var(--bg-light);
         }
 
-        .slide-placeholder {
+        .slide-content {
+            position: relative;
             width: 100%;
             height: 500px;
-            background: linear-gradient(135deg, var(--purple-lightest) 0%, var(--bg-light) 100%);
+            border-radius: 12px;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--gray-medium);
-            font-style: italic;
-            border-radius: 8px;
-            border: 1px dashed var(--purple-lighter);
         }
 
-        .slide img {
-            width: 100%;
+        /* Phone mockup container */
+        .phone-mockup {
+            width: 280px;
             height: 500px;
-            object-fit: contain;
-            border-radius: 8px;
+            background: #000;
+            border-radius: 25px;
+            padding: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #f0f0f0;
+            border-radius: 18px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .phone-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 18px;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Fallback styles */
+        .slide-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--purple-lightest) 0%, var(--bg-light) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            border: 2px dashed var(--purple-lighter);
+            border-radius: 18px;
+        }
+
+        .placeholder-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .placeholder-content h4 {
+            color: var(--purple-dark);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .placeholder-content p {
+            color: var(--gray-medium);
+            line-height: 1.4;
+            font-size: 0.85rem;
         }
 
         .slideshow-controls {
@@ -382,6 +434,7 @@
             color: var(--purple);
             font-size: 18px;
             font-weight: 600;
+            z-index: 10;
         }
 
         .slideshow-controls:hover {
@@ -438,6 +491,47 @@
             color: var(--gray-medium);
             font-size: 0.95rem;
             line-height: 1.5;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 0;
+            border-top: 1px solid var(--border-light);
+            background: var(--white);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 4rem;
+            letter-spacing: -0.02em;
+            text-align: center;
+            color: var(--purple);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 4rem 3rem;
+        }
+
+        .feature {
+            position: relative;
+            text-align: center;
+        }
+
+        .feature h3 {
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+            color: var(--purple-dark);
+        }
+
+        .feature p {
+            color: var(--gray-medium);
+            line-height: 1.6;
+            font-weight: 300;
         }
 
         /* Mission Section */
@@ -527,42 +621,6 @@
 
         .team-links a:hover {
             color: var(--purple-dark);
-        }
-
-        /* Team Modal */
-        .team-modal-content {
-            max-width: 500px;
-        }
-
-        .team-modal-photo {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--border-light);
-            margin: 0 auto 1.5rem;
-            display: block;
-        }
-
-        .team-modal-name {
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: var(--purple-dark);
-            text-align: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .team-modal-role {
-            color: var(--purple);
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-        }
-
-        .team-modal-bio {
-            color: var(--gray-medium);
-            line-height: 1.6;
-            text-align: left;
         }
 
         /* FAQ Section */
@@ -728,45 +786,40 @@
             display: none;
         }
 
-        /* Features Section */
-        .features {
-            padding: 8rem 0;
-            border-top: 1px solid var(--border-light);
-            background: var(--white);
+        /* Team Modal */
+        .team-modal-content {
+            max-width: 500px;
         }
 
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 300;
-            margin-bottom: 4rem;
-            letter-spacing: -0.02em;
-            text-align: center;
-            color: var(--purple);
+        .team-modal-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-light);
+            margin: 0 auto 1.5rem;
+            display: block;
         }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 4rem 3rem;
-        }
-
-        .feature {
-            position: relative;
-            text-align: center;
-        }
-
-        .feature h3 {
-            font-size: 1.25rem;
-            font-weight: 400;
-            margin-bottom: 1rem;
-            letter-spacing: -0.01em;
+        .team-modal-name {
+            font-size: 1.5rem;
+            font-weight: 500;
             color: var(--purple-dark);
+            text-align: center;
+            margin-bottom: 0.5rem;
         }
 
-        .feature p {
+        .team-modal-role {
+            color: var(--purple);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .team-modal-bio {
             color: var(--gray-medium);
             line-height: 1.6;
-            font-weight: 300;
+            text-align: left;
         }
 
         /* Footer */
@@ -817,7 +870,6 @@
                 display: none;
             }
 
-            /* Better mobile centering */
             .hero {
                 padding: 6rem 0 4rem;
                 min-height: 100vh;
@@ -833,7 +885,6 @@
                 padding: 0;
             }
 
-            /* Hide floating sketches on mobile to reduce visual clutter */
             .sketches-container {
                 display: none;
             }
@@ -888,9 +939,13 @@
                 padding: 2rem 1rem;
             }
 
-            .slide-placeholder,
-            .slide img {
-                height: 400px;
+            .phone-mockup {
+                width: 240px;
+                height: 420px;
+            }
+
+            .slide-content {
+                height: 450px;
             }
 
             .slideshow-controls {
@@ -912,7 +967,6 @@
                 text-align: center;
             }
 
-            /* Ensure proper centering for all sections */
             .mission-content {
                 font-size: 1.2rem;
                 text-align: center;
@@ -928,12 +982,10 @@
                 padding: 0 1rem;
             }
 
-            /* Navigation logo centering */
             .logo {
                 justify-content: center;
             }
 
-            /* Better form centering */
             .beta-section {
                 width: 100%;
                 display: flex;
@@ -946,7 +998,6 @@
             }
         }
 
-        /* iPhone specific adjustments */
         @media (max-width: 480px) {
             .container {
                 padding: 0 1rem;
@@ -1089,21 +1140,88 @@
                         <div class="slideshow-container">
                             <div class="slideshow-wrapper">
                                 <div class="slides" id="slides">
+                                    <!-- Slide 1: Code Generation -->
                                     <div class="slide">
-                                        <img src="./assets/screenshot-1.png" alt="AI Chat Interface showing poetry conversation" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                        <div class="slide-placeholder" style="display:none;">Screenshot 1: Creative AI Conversations</div>
+                                        <div class="slide-content">
+                                            <div class="phone-mockup">
+                                                <div class="phone-screen">
+                                                    <img src="./assets/screenshot-1.png" 
+                                                         alt="Code generation - merge sort algorithm"
+                                                         onload="this.style.opacity='1'"
+                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="slide-placeholder" style="display: none;">
+                                                        <div class="placeholder-content">
+                                                            <div class="placeholder-icon">💻</div>
+                                                            <h4>Code Generation & Learning</h4>
+                                                            <p>Generate, review, and learn from code examples in multiple programming languages. Ask for algorithms like merge sort and get clean, well-commented Python code.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <!-- Slide 2: Creative Writing -->
                                     <div class="slide">
-                                        <img src="./assets/screenshot-2.png" alt="Settings screen with model selection" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                        <div class="slide-placeholder" style="display:none;">Screenshot 2: Model Settings</div>
+                                        <div class="slide-content">
+                                            <div class="phone-mockup">
+                                                <div class="phone-screen">
+                                                    <img src="./assets/screenshot-2.png" 
+                                                         alt="Creative poetry conversation about mangoes and apples"
+                                                         onload="this.style.opacity='1'"
+                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="slide-placeholder" style="display: none;">
+                                                        <div class="placeholder-content">
+                                                            <div class="placeholder-icon">✨</div>
+                                                            <h4>Creative AI Conversations</h4>
+                                                            <p>Engage in poetry, creative writing, and artistic projects. Ask for poems about mangoes, apples, or any topic that inspires you.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <!-- Slide 3: Settings & Model Selection -->
                                     <div class="slide">
-                                        <img src="./assets/screenshot-3.png" alt="Technical conversation with keyboard visible" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                        <div class="slide-placeholder" style="display:none;">Screenshot 3: Technical Conversations</div>
+                                        <div class="slide-content">
+                                            <div class="phone-mockup">
+                                                <div class="phone-screen">
+                                                    <img src="./assets/screenshot-3.jpeg" 
+                                                         alt="Settings screen showing model selection and temperature controls"
+                                                         onload="this.style.opacity='1'"
+                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="slide-placeholder" style="display: none;">
+                                                        <div class="placeholder-content">
+                                                            <div class="placeholder-icon">⚙️</div>
+                                                            <h4>Flexible Model Management</h4>
+                                                            <p>Switch between AI models like TinyLlama and Gemma. Adjust temperature settings to control creativity vs. reliability.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <!-- Slide 4: Technical Explanations -->
                                     <div class="slide">
-                                        <img src="./assets/screenshot-4.png" alt="Code generation showing merge sort algorithm" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                        <div class="slide-placeholder" style="display:none;">Screenshot 4: Code Generation</div>
+                                        <div class="slide-content">
+                                            <div class="phone-mockup">
+                                                <div class="phone-screen">
+                                                    <img src="./assets/screenshot-4.png" 
+                                                         alt="Technical conversation about data structures with keyboard visible"
+                                                         onload="this.style.opacity='1'"
+                                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="slide-placeholder" style="display: none;">
+                                                        <div class="placeholder-content">
+                                                            <div class="placeholder-icon">🔧</div>
+                                                            <h4>Technical Problem Solving</h4>
+                                                            <p>Get help with complex technical topics, data structures like linked lists, and step-by-step explanations of algorithms.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -1119,8 +1237,8 @@
                             </div>
                             
                             <div class="slideshow-caption">
-                                <div class="caption-title" id="caption-title">Creative AI Conversations</div>
-                                <div class="caption-text" id="caption-text">Engage in creative writing, poetry, and artistic projects with AI models running locally on your device.</div>
+                                <div class="caption-title" id="caption-title">Code Generation & Learning</div>
+                                <div class="caption-text" id="caption-text">Generate, review, and learn from code examples in multiple programming languages. Ask for algorithms like merge sort and get clean, well-commented Python code.</div>
                             </div>
                         </div>
                     </div>
@@ -1212,7 +1330,7 @@
                     </div>
                     
                     <div class="team-member" onclick="openTeamModal('smith')">
-                        <img class="team-photo" src="./assets/smith-patel.jpg" alt="Headshot of Smith Patel" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiNGQUY1RkYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiI+CjxwYXRoIGQ9Im0yMCAyMS12LTJhNCA0IDAgMCAwLTQtNEg4YTQgNCAwIDAgMC00IDR2MiIvPgo8Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiLz4KPC9zdmc+CjxzdmcgZmlsbD0iIzZCNzI4MCIgZm9udC1zaXplPSIxMnB4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgeD0iMjQiIHk9Ijc2Ij48dGV4dD5TUDY8L3RleHQ+PC9zdmc+CjxzdmcgZmlsbD0iIzZCNzI4MCIgZm9udC1zaXplPSIxMnB4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgeD0iMjQiIHk9Ijc2Ij48dGV4dD5TUDU8L3RleHQ+PC9zdmc+CjwvYXNnPg==';">
+                        <img class="team-photo" src="./assets/smith-patel.jpg" alt="Headshot of Smith Patel" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiNGQUY1RkYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiI+CjxwYXRoIGQ9Im0yMCAyMS12LTJhNCA0IDAgMCAwLTQtNEg4YTQgNCAwIDAgMC00IDR2MiIvPgo8Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiLz4KPC9zdmc+CjxzdmcgZmlsbD0iIzZCNzI4MCIgZm9udC1zaXplPSIxMnB4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgeD0iMjQiIHk9Ijc2Ij48dGV4dD5TUDU8L3RleHQ+PC9zdmc+CjwvYXNnPg==';">
                         <h3>Smith Patel</h3>
                         <p class="role">Chief Operating Officer (COO)</p>
                         <div class="team-links">
@@ -1309,7 +1427,6 @@
     <div class="modal-backdrop" onclick="closeAllModals()"></div>
 
     <script>
-        // Simple, working JavaScript with inline event handlers
         console.log('JavaScript is loading...');
 
         // Team member data
@@ -1340,23 +1457,23 @@
             }
         };
 
-        // Slideshow data
+        // Slideshow data - UPDATED TO MATCH YOUR ACTUAL SCREENSHOTS
         const slideData = [
             {
-                title: "Creative AI Conversations",
-                text: "Engage in creative writing, poetry, and artistic projects with AI models running locally on your device."
+                title: "Code Generation & Learning",
+                text: "Generate, review, and learn from code examples in multiple programming languages. Ask for algorithms like merge sort and get clean, well-commented Python code."
             },
             {
-                title: "Flexible Model Management", 
-                text: "Easily switch between AI models and adjust settings like temperature for different conversation styles."
+                title: "Creative AI Conversations", 
+                text: "Engage in poetry, creative writing, and artistic projects. Ask for poems about mangoes, apples, or any topic that inspires you."
+            },
+            {
+                title: "Flexible Model Management",
+                text: "Switch between AI models like TinyLlama and Gemma. Adjust temperature settings to control creativity vs. reliability."
             },
             {
                 title: "Technical Problem Solving",
-                text: "Get help with complex technical topics, data structures, and programming concepts."
-            },
-            {
-                title: "Code Generation & Learning",
-                text: "Generate, review, and learn from code examples in multiple programming languages."
+                text: "Get help with complex technical topics, data structures like linked lists, and step-by-step explanations of algorithms."
             }
         ];
 
@@ -1520,7 +1637,7 @@
             }
         }
 
-        // Form submission with Supabase integration - FIXED VERSION
+        // Form submission with Supabase integration
         async function handleFormSubmit(event) {
             console.log('Form submitted');
             event.preventDefault();
@@ -1566,15 +1683,14 @@
                 );
                 console.log('Supabase client created');
 
-                console.log('Attempting to insert only essential fields...');
+                console.log('Attempting to insert...');
 
-                // Insert only the essential fields - FIXED VERSION
+                // Insert the data
                 const { data, error } = await supabase
                     .from('beta_signups')
                     .insert([{
                         full_name: name,
                         email: email
-                        // Let database auto-generate: id, inserted_at
                     }])
                     .select('id,email,inserted_at')
                     .single();
@@ -1590,14 +1706,9 @@
                     });
                     
                     if (error.code === '23505') {
-                        errorMsg.textContent = 'Oops! You\'ve already submitted.';
-                    } else if (error.code === 'PGRST116') {
-                        errorMsg.textContent = 'Signup blocked by security policy. Check RLS policies in Supabase.';
-                    } else if (error.message.includes('row-level security')) {
-                        errorMsg.textContent = 'Database security error. Please contact support.';
+                        errorMsg.textContent = 'You\'ve already signed up!';
                     } else {
-                        // Show the actual error for debugging
-                        errorMsg.textContent = `Error: ${error.message} (Code: ${error.code || 'unknown'})`;
+                        errorMsg.textContent = `Error: ${error.message}`;
                     }
                     errorMsg.style.display = 'block';
                     return;
@@ -1610,12 +1721,7 @@
                 form.reset();
                 
             } catch (error) {
-                console.error('Unexpected error details:', {
-                    name: error.name,
-                    message: error.message,
-                    stack: error.stack
-                });
-                
+                console.error('Unexpected error:', error);
                 const errorMsg = document.getElementById('beta-error');
                 errorMsg.textContent = `Network error: ${error.message}`;
                 errorMsg.style.display = 'block';
@@ -1629,10 +1735,10 @@
             // Initialize slideshow
             updateSlideshow();
             
-            // Auto-advance slideshow every 5 seconds
+            // Auto-advance slideshow every 6 seconds
             setInterval(function() {
                 changeSlide(1);
-            }, 5000);
+            }, 6000);
 
             // Parallax effect for sketches
             const sketches = document.querySelectorAll('.sketch');
