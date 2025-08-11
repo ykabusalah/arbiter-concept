@@ -1141,7 +1141,6 @@
     </div>
 </div>
 
-<!-- ADD THIS CSS TO YOUR EXISTING STYLES (REPLACE any existing sketch positioning) -->
 <style>
 /* EXPLICIT LEFT SIDE POSITIONING */
 .left-1 { 
@@ -1644,12 +1643,6 @@
     transition: transform 0.3s ease-out !important;
 }
 
-/* Debug - temporary borders to see positioning */
-/*
-.left-1, .left-2, .left-3, .left-4, .left-5 { border: 2px solid red !important; }
-.right-1, .right-2, .right-3, .right-4, .right-5 { border: 2px solid blue !important; }
-.center-1, .center-2, .center-3 { border: 2px solid green !important; }
-*/
 </style>
 
     <!-- Main content -->
@@ -1939,389 +1932,339 @@
         </footer>
     </div>
 
-    <!-- Beta Modal -->
-    <div id="beta-modal" class="modal" aria-hidden="true">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 class="modal-title">Join the TestFlight Beta</h3>
-                <button class="modal-close" onclick="closeBetaModal()">×</button>
-            </div>
-            
-            <form id="beta-form" class="beta-form" onsubmit="handleFormSubmit(event)">
-                <div class="form-group">
-                    <label for="full_name">Name*</label>
-                    <input id="full_name" name="full_name" type="text" placeholder="Your full name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email*</label>
-                    <input id="email" name="email" type="email" placeholder="you@example.com" required>
-                </div>
-                <button type="submit" class="btn-primary">Request Invite</button>
-                <div class="success-msg" id="beta-success"></div>
-                <div class="error-msg" id="beta-error"></div>
-            </form>
+<!-- Team Modal -->
+<div id="team-modal" class="modal" aria-hidden="true">
+    <div class="modal-card team-modal-content">
+        <div class="modal-header">
+            <button class="modal-close" onclick="closeTeamModal()">×</button>
+        </div>
+        
+        <div id="team-modal-body">
+
         </div>
     </div>
+</div>
 
-    <!-- Team Modal -->
-    <div id="team-modal" class="modal" aria-hidden="true">
-        <div class="modal-card team-modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="team-modal-title">Team Member</h3>
-                <button class="modal-close" onclick="closeTeamModal()">×</button>
-            </div>
+<style>
+/* Enhanced Team Modal Styles */
+.team-modal-content {
+    max-width: 550px;
+    padding: 2rem;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Move close button to right only */
+    margin-bottom: 0; /* Remove margin since we removed title */
+}
+
+.team-modal-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-light);
+    margin: 0 auto 1.5rem;
+    display: block;
+    box-shadow: 0 4px 12px rgba(107, 70, 193, 0.1);
+}
+
+.team-modal-name {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: var(--purple-dark);
+    text-align: center;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.team-modal-role {
+    color: var(--purple);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+/* Social Links Section */
+.team-social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.social-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--gray-medium);
+    transition: all 0.2s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: var(--purple-lightest);
+    border: 1px solid var(--border-light);
+    min-width: 80px;
+}
+
+.social-link:hover {
+    color: var(--purple);
+    background: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 70, 193, 0.15);
+}
+
+.social-icon {
+    font-size: 1.5rem;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: var(--white);
+    border: 1px solid var(--border-light);
+}
+
+.social-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* LinkedIn specific styling */
+.social-link.linkedin .social-icon {
+    background: #0077B5;
+    color: white;
+    border-color: #0077B5;
+}
+
+.social-link.linkedin:hover .social-icon {
+    background: #005885;
+}
+
+/* Email specific styling */
+.social-link.email .social-icon {
+    background: var(--purple);
+    color: white;
+    border-color: var(--purple);
+}
+
+.social-link.email:hover .social-icon {
+    background: var(--purple-dark);
+}
+
+/* GitHub styling (if you add it) */
+.social-link.github .social-icon {
+    background: #333;
+    color: white;
+    border-color: #333;
+}
+
+.social-link.github:hover .social-icon {
+    background: #000;
+}
+
+/* Twitter/X styling (if you add it) */
+.social-link.twitter .social-icon {
+    background: #1DA1F2;
+    color: white;
+    border-color: #1DA1F2;
+}
+
+.social-link.twitter:hover .social-icon {
+    background: #0d8bd9;
+}
+
+/* Website styling */
+.social-link.website .social-icon {
+    background: #10B981;
+    color: white;
+    border-color: #10B981;
+}
+
+.social-link.website:hover .social-icon {
+    background: #059669;
+}
+
+
+
+.team-modal-bio {
+    color: var(--gray-medium);
+    line-height: 1.6;
+    text-align: left;
+    font-size: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .team-social-links {
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .social-link {
+        min-width: 70px;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .social-icon {
+        font-size: 1.2rem;
+        width: 25px;
+        height: 25px;
+    }
+    
+    .team-modal-content {
+        padding: 1.5rem;
+    }
+    
+    .team-modal-name {
+        font-size: 1.5rem;
+    }
+}
+</style>
+
+<!-- UPDATE your JavaScript teamData object with social links: -->
+<script>
+// Enhanced team member data
+const teamData = {
+    jordan: {
+        name: "Jordan Stone",
+        role: "Founder (CEO/CTO)",
+        photo: "./assets/jordan-stone.jpg",
+        bio: "Jordan is a full-stack software engineer with a strong foundation in mobile and backend development, holding a Computer Science degree from Washington University in St. Louis. He has experience building and optimizing production-grade iOS applications and scalable backend systems. Jordan is deeply passionate about building AI technologies that prioritize user privacy and long-term sustainability.",
+        social: {
+            linkedin: "https://www.linkedin.com/in/jordan-stone-051a25142/"
+            email: "jordan@askarbiter.ai",
+            github: "https://github.com/Jordans2299" 
+        }
+    },
+    yousef: {
+        name: "Yousef Abu Salah",
+        role: "Chief Design Officer (CDO)",
+        photo: "./assets/yousef-abu-salah.jpg",
+        bio: "Yousef leads design at Arbiter, bringing a passion for creating intuitive, accessible user experiences. His vision ensures that powerful AI capabilities remain approachable and human-centered, making advanced technology accessible to users regardless of their technical background.",
+        social: {
+            linkedin: "www.linkedin.com/in/ykabusalah"
+            email: "yousef@askarbiter.ai",
+            github: "https://github.com/ykabusalah"
+            website: "ykabusalah.me"
+        }
+    },
+    harpreet: {
+        name: "Harpreet Singh",
+        role: "Chief Financial Officer (CFO)",
+        photo: "./assets/harpreet-singh.jpg",
+        bio: "Harpreet is a Harvard graduate who brings consulting expertise and diverse perspectives to Arbiter's financial strategy. His background in consulting provides valuable insights that help guide our business decisions and ensure sustainable growth while maintaining our commitment to user privacy and data ownership.",
+        social: {
+            linkedin: "https://www.linkedin.com/in/harpreet-singh-4937b3163/"
+            email: "harpreet@askarbiter.ai"
+        }
+    },
+    smith: {
+        name: "Smith Patel",
+        role: "Chief Operating Officer (COO)",
+        photo: "./assets/smith-patel.jpg",
+        bio: "Smith brings operational excellence and strategic insight to Arbiter. With an engineering background from Mississippi State and a passion for technology and innovation, Smith ensures that our vision translates into practical, scalable solutions that serve our users effectively.",
+        social: {
+            linkedin: "https://www.linkedin.com/in/smith-patel-eit-a-m-asce-0b955714a/"
+            email: "smith@askarbiter.ai"
+        }
+    }
+};
+
+// Enhanced team modal function
+function openTeamModal(memberKey) {
+    try {
+        const member = teamData[memberKey];
+        if (!member) {
+            console.error('Team member not found:', memberKey);
+            return;
+        }
+
+        const modal = document.getElementById('team-modal');
+        const backdrop = document.querySelector('.modal-backdrop');
+        const modalBody = document.getElementById('team-modal-body');
+        
+        if (modal && backdrop && modalBody) {
+            // Build social links HTML
+            let socialLinksHTML = '<div class="team-social-links">';
             
-            <div id="team-modal-body">
-                <!-- Content will be populated by JavaScript -->
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-backdrop" onclick="closeAllModals()"></div>
-
-    <script>
-        console.log('JavaScript is loading...');
-
-        // Team member data
-        const teamData = {
-            jordan: {
-                name: "Jordan Stone",
-                role: "Founder (CEO/CTO)",
-                photo: "./assets/jordan-stone.jpg",
-                bio: "Jordan is a full-stack software engineer with a strong foundation in mobile and backend development, holding a Computer Science degree from Washington University in St. Louis. He has experience building and optimizing production-grade iOS applications and scalable backend systems. Jordan is deeply passionate about building AI technologies that prioritize user privacy and long-term sustainability. His current work focuses on empowering individuals with local, secure AI tools that respect data ownership and reduce reliance on energy-intensive cloud infrastructure."
-            },
-            smith: {
-                name: "Smith Patel",
-                role: "Chief Operating Officer (COO)",
-                photo: "./assets/smith-patel.jpg",
-                bio: "Smith brings operational excellence and strategic insight to Arbiter. With an engineering background from Mississippi State and a passion for technology and innovation, Smith ensures that our vision translates into practical, scalable solutions that serve our users effectively."
-            },
-            harpreet: {
-                name: "Harpreet Singh",
-                role: "Chief Financial Officer (CFO)",
-                photo: "./assets/harpreet-singh.jpg",
-                bio: "Harpreet is a Harvard graduate who brings consulting expertise and diverse perspectives to Arbiter's financial strategy. His background in consulting provides valuable insights that help guide our business decisions and ensure sustainable growth while maintaining our commitment to user privacy and data ownership."
-            },
-            yousef: {
-                name: "Yousef Abu Salah",
-                role: "Chief Design Officer (CDO)",
-                photo: "./assets/yousef-abu-salah.jpg",
-                bio: "Yousef leads design at Arbiter, bringing a passion for creating intuitive, accessible user experiences. His vision ensures that powerful AI capabilities remain approachable and human-centered, making advanced technology accessible to users regardless of their technical background."
+            if (member.social.linkedin) {
+                socialLinksHTML += `
+                    <a href="${member.social.linkedin}" class="social-link linkedin" target="_blank" onclick="event.stopPropagation()">
+                        <div class="social-icon">💼</div>
+                        <span class="social-label">LinkedIn</span>
+                    </a>
+                `;
             }
-        };
-
-        // Slideshow data - UPDATED TO MATCH YOUR ACTUAL SCREENSHOTS
-        const slideData = [
-            {
-                title: "Code Generation & Learning",
-                text: "Generate, review, and learn from code examples in multiple programming languages. Ask for algorithms like merge sort and get clean, well-commented Python code."
-            },
-            {
-                title: "Creative AI Conversations", 
-                text: "Engage in poetry, creative writing, and artistic projects. Ask for poems about mangoes, apples, or any topic that inspires you."
-            },
-            {
-                title: "Flexible Model Management",
-                text: "Switch between AI models like TinyLlama and Gemma. Adjust temperature settings to control creativity vs. reliability."
-            },
-            {
-                title: "Technical Problem Solving",
-                text: "Get help with complex technical topics, data structures like linked lists, and step-by-step explanations of algorithms."
-            }
-        ];
-
-        let currentSlideIndex = 0;
-
-        // Beta Modal Functions
-        function openBetaModal() {
-            console.log('Opening beta modal');
-            try {
-                const modal = document.getElementById('beta-modal');
-                const backdrop = document.querySelector('.modal-backdrop');
-                
-                if (modal && backdrop) {
-                    modal.classList.add('open');
-                    backdrop.classList.add('open');
-                    modal.setAttribute('aria-hidden', 'false');
-                    
-                    setTimeout(function() {
-                        const emailInput = document.getElementById('email');
-                        if (emailInput) emailInput.focus();
-                    }, 100);
-                    
-                    console.log('Beta modal opened successfully');
-                } else {
-                    console.error('Beta modal elements not found');
-                }
-            } catch (error) {
-                console.error('Error opening beta modal:', error);
-            }
-        }
-
-        function closeBetaModal() {
-            console.log('Closing beta modal');
-            try {
-                const modal = document.getElementById('beta-modal');
-                const backdrop = document.querySelector('.modal-backdrop');
-                
-                if (modal && backdrop) {
-                    modal.classList.remove('open');
-                    backdrop.classList.remove('open');
-                    modal.setAttribute('aria-hidden', 'true');
-                    console.log('Beta modal closed successfully');
-                }
-            } catch (error) {
-                console.error('Error closing beta modal:', error);
-            }
-        }
-
-        // Team Modal Functions
-        function openTeamModal(memberKey) {
-            console.log('Opening team modal for:', memberKey);
-            try {
-                const member = teamData[memberKey];
-                if (!member) {
-                    console.error('Team member not found:', memberKey);
-                    return;
-                }
-
-                const modal = document.getElementById('team-modal');
-                const backdrop = document.querySelector('.modal-backdrop');
-                const modalBody = document.getElementById('team-modal-body');
-                const modalTitle = document.getElementById('team-modal-title');
-                
-                if (modal && backdrop && modalBody && modalTitle) {
-                    modalBody.innerHTML = `
-                        <img class="team-modal-photo" src="${member.photo}" alt="${member.name}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNjAiIHI9IjYwIiBmaWxsPSIjRkFGNUZGIi8+CjxzdmcgeD0iMzYiIHk9IjM2IiB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOUNBM0FGIiBzdHJva2Utd2lkdGg9IjIiPgo8cGF0aCBkPSJtMjAgMjEtdi0yYTQgNCAwIDAgMC00LTRIOGE0IDQgMCAwIDAtNCA0djIiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSI3IiByPSI0Ii8+Cjwvc3ZnPgo8L3N2Zz4K';">
-                        <h3 class="team-modal-name">${member.name}</h3>
-                        <p class="team-modal-role">${member.role}</p>
-                        <p class="team-modal-bio">${member.bio}</p>
-                    `;
-                    
-                    modalTitle.textContent = member.name;
-                    
-                    modal.classList.add('open');
-                    backdrop.classList.add('open');
-                    modal.setAttribute('aria-hidden', 'false');
-                    
-                    console.log('Team modal opened successfully');
-                } else {
-                    console.error('Team modal elements not found');
-                }
-            } catch (error) {
-                console.error('Error opening team modal:', error);
-            }
-        }
-
-        function closeTeamModal() {
-            console.log('Closing team modal');
-            try {
-                const modal = document.getElementById('team-modal');
-                const backdrop = document.querySelector('.modal-backdrop');
-                
-                if (modal && backdrop) {
-                    modal.classList.remove('open');
-                    backdrop.classList.remove('open');
-                    modal.setAttribute('aria-hidden', 'true');
-                    console.log('Team modal closed successfully');
-                }
-            } catch (error) {
-                console.error('Error closing team modal:', error);
-            }
-        }
-
-        function closeAllModals() {
-            closeBetaModal();
-            closeTeamModal();
-        }
-
-        // Slideshow Functions
-        function updateSlideshow() {
-            try {
-                const slides = document.getElementById('slides');
-                const dots = document.querySelectorAll('.dot');
-                
-                if (slides) {
-                    const offset = -currentSlideIndex * 100;
-                    slides.style.transform = `translateX(${offset}%)`;
-                }
-                
-                // Update dots
-                dots.forEach((dot, index) => {
-                    dot.classList.toggle('active', index === currentSlideIndex);
-                });
-                
-                // Update caption
-                const slideInfo = slideData[currentSlideIndex];
-                const titleEl = document.getElementById('caption-title');
-                const textEl = document.getElementById('caption-text');
-                if (titleEl) titleEl.textContent = slideInfo.title;
-                if (textEl) textEl.textContent = slideInfo.text;
-                
-            } catch (error) {
-                console.error('Error updating slideshow:', error);
-            }
-        }
-
-        function changeSlide(direction) {
-            console.log('Changing slide by:', direction);
-            try {
-                currentSlideIndex += direction;
-                
-                if (currentSlideIndex >= slideData.length) {
-                    currentSlideIndex = 0;
-                } else if (currentSlideIndex < 0) {
-                    currentSlideIndex = slideData.length - 1;
-                }
-                
-                updateSlideshow();
-            } catch (error) {
-                console.error('Error changing slide:', error);
-            }
-        }
-
-        function goToSlide(index) {
-            console.log('Going to slide:', index);
-            try {
-                currentSlideIndex = index;
-                updateSlideshow();
-            } catch (error) {
-                console.error('Error going to slide:', error);
-            }
-        }
-
-        // Form submission with Supabase integration
-        async function handleFormSubmit(event) {
-            console.log('Form submitted');
-            event.preventDefault();
             
-            try {
-                const form = document.getElementById('beta-form');
-                const successMsg = document.getElementById('beta-success');
-                const errorMsg = document.getElementById('beta-error');
-                
-                // Hide previous messages
-                successMsg.style.display = 'none';
-                errorMsg.style.display = 'none';
-                
-                // Get form data
-                const formData = new FormData(form);
-                const name = formData.get('full_name').trim();
-                const email = formData.get('email').trim();
-                
-                console.log('Form data:', { name, email });
-                
-                // Basic validation
-                if (!name) {
-                    errorMsg.textContent = 'Please enter your name.';
-                    errorMsg.style.display = 'block';
-                    return;
-                }
-                
-                if (!email || !email.includes('@')) {
-                    errorMsg.textContent = 'Please enter a valid email address.';
-                    errorMsg.style.display = 'block';
-                    return;
-                }
-
-                console.log('Loading Supabase...');
-                
-                // Load Supabase and submit to database
-                const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
-                console.log('Supabase library loaded');
-                
-                const supabase = createClient(
-                    'https://swxehqxiqyyyjbsekkwa.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3eGVocXhpcXl5eWpic2Vra3dhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ3NzUwMzQsImV4cCI6MjA3MDM1MTAzNH0.7ivEWvbnLsOgt8MnKATO6BxWJPfxZn336GE0n_Kwq5s'
-                );
-                console.log('Supabase client created');
-
-                console.log('Attempting to insert...');
-
-                // Insert the data
-                const { data, error } = await supabase
-                    .from('beta_signups')
-                    .insert([{
-                        full_name: name,
-                        email: email
-                    }])
-                    .select('id,email,inserted_at')
-                    .single();
-
-                console.log('Supabase response:', { data, error });
-
-                if (error) {
-                    console.error('Supabase error details:', {
-                        message: error.message,
-                        code: error.code,
-                        details: error.details,
-                        hint: error.hint
-                    });
-                    
-                    if (error.code === '23505') {
-                        errorMsg.textContent = 'You\'ve already signed up!';
-                    } else {
-                        errorMsg.textContent = `Error: ${error.message}`;
-                    }
-                    errorMsg.style.display = 'block';
-                    return;
-                }
-
-                // Success!
-                console.log('Signup successful:', data);
-                successMsg.innerHTML = '<div style="display:flex;align-items:center;gap:12px;color:#218838"><span>✓</span><span>Success! You\'re on the list.</span></div>';
-                successMsg.style.display = 'block';
-                form.reset();
-                
-            } catch (error) {
-                console.error('Unexpected error:', error);
-                const errorMsg = document.getElementById('beta-error');
-                errorMsg.textContent = `Network error: ${error.message}`;
-                errorMsg.style.display = 'block';
+            if (member.social.email) {
+                socialLinksHTML += `
+                    <a href="mailto:${member.social.email}" class="social-link email" onclick="event.stopPropagation()">
+                        <div class="social-icon">✉️</div>
+                        <span class="social-label">Email</span>
+                    </a>
+                `;
             }
+            
+            if (member.social.github) {
+                socialLinksHTML += `
+                    <a href="${member.social.github}" class="social-link github" target="_blank" onclick="event.stopPropagation()">
+                        <div class="social-icon">💻</div>
+                        <span class="social-label">GitHub</span>
+                    </a>
+                `;
+            }
+            
+            if (member.social.twitter) {
+                socialLinksHTML += `
+                    <a href="${member.social.twitter}" class="social-link twitter" target="_blank" onclick="event.stopPropagation()">
+                        <div class="social-icon">🐦</div>
+                        <span class="social-label">Twitter</span>
+                    </a>
+                `;
+            }
+            
+            if (member.social.website) {
+                socialLinksHTML += `
+                    <a href="${member.social.website}" class="social-link website" target="_blank" onclick="event.stopPropagation()">
+                        <div class="social-icon">🌐</div>
+                        <span class="social-label">Website</span>
+                    </a>
+                `;
+            }
+            
+            socialLinksHTML += '</div>';
+            
+            modalBody.innerHTML = `
+                <img class="team-modal-photo" src="${member.photo}" alt="${member.name}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNjAiIHI9IjYwIiBmaWxsPSIjRkFGNUZGIi8+CjxzdmcgeD0iMzYiIHk9IjM2IiB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOUNBM0FGIiBzdHJva2Utd2lkdGg9IjIiPgo8cGF0aCBkPSJtMjAgMjEtdi0yYTQgNCAwIDAgMC00LTRIOGE0IDQgMCAwIDAtNCA0djIiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSI3IiByPSI0Ii8+Cjwvc3ZnPgo8L3N2Zz4K';">
+                <h3 class="team-modal-name">${member.name}</h3>
+                <p class="team-modal-role">${member.role}</p>
+                ${socialLinksHTML}
+                <p class="team-modal-bio">${member.bio}</p>
+            `;
+            
+            modal.classList.add('open');
+            backdrop.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+            
+            console.log('Team modal opened successfully');
+        } else {
+            console.error('Team modal elements not found');
         }
-
-        // Initialize everything when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing...');
-            
-            // Initialize slideshow
-            updateSlideshow();
-            
-            // Auto-advance slideshow every 6 seconds
-            setInterval(function() {
-                changeSlide(1);
-            }, 6000);
-
-            // Parallax effect for sketches
-            const sketches = document.querySelectorAll('.sketch');
-            
-            window.addEventListener('scroll', function() {
-                try {
-                    const scrolled = window.pageYOffset;
-                    
-                    sketches.forEach(function(sketch, index) {
-                        const speed = index % 2 === 0 ? 0.15 : 0.25;
-                        const yPos = -(scrolled * speed);
-                        sketch.style.transform = `translateY(${yPos}px)`;
-                    });
-                } catch (error) {
-                    console.error('Error in parallax effect:', error);
-                }
-            });
-
-            console.log('All functionality initialized successfully!');
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeAllModals();
-            }
-        });
-
-        console.log('JavaScript loaded successfully!');
-    </script>
+    } catch (error) {
+        console.error('Error opening team modal:', error);
+    }
+}
+</script>
 
 </body>
 </html>
