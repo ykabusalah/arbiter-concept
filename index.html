@@ -1049,55 +1049,608 @@
     </style>
 </head>
 <body>
-    <!-- Floating sketches container -->
-    <div class="sketches-container">
-        <div class="sketch sketch-planet sketch-1 float-up">
-            <div class="planet-surface"></div>
-        </div>
-        
-        <div class="sketch sketch-planet sketch-2 float-down" style="animation-delay: 0.5s;">
-            <div class="planet-surface">
-                <div class="planet-ring"></div>
-            </div>
-        </div>
-        
-        <div class="sketch sketch-planet sketch-3 float-up" style="animation-delay: 1s;">
-            <div class="planet-surface"></div>
-        </div>
-        
-        <div class="sketch sketch-planet sketch-4 float-down">
-            <div class="planet-surface">
-                <div class="planet-ring"></div>
-                <div class="planet-ring-inner"></div>
-            </div>
-        </div>
-        
-        <div class="sketch sketch-planet sketch-5 float-up" style="animation-delay: 0.7s;">
-            <div class="planet-surface"></div>
-        </div>
-        
-        <div class="sketch sketch-planet sketch-6 float-down" style="animation-delay: 1.2s;">
-            <div class="planet-surface"></div>
-        </div>
-        
-        <div class="sketch sketch-planet sketch-7 float-up" style="animation-delay: 1.5s;">
-            <div class="planet-surface">
-                <div class="planet-ring"></div>
-            </div>
-        </div>
+ 
+ <!-- REPLACE YOUR ENTIRE sketches-container section with this: -->
 
-        <div class="sketch sketch-planet sketch-8 float-down" style="animation-delay: 2s;">
-            <div class="planet-surface"></div>
-        </div>
-
-        <div class="sketch asteroid-shape sketch-9 float-up" style="animation-delay: 0.9s;">
-            <div class="asteroid-surface"></div>
-        </div>
-
-        <div class="sketch asteroid-shape sketch-10 float-down" style="animation-delay: 1.8s;">
-            <div class="asteroid-surface asteroid-surface-2"></div>
+<div class="sketches-container">
+    <!-- LEFT SIDE PLANETS -->
+    <div class="sketch sketch-planet left-1 float-up">
+        <div class="planet-surface gas-giant">
+            <div class="gas-bands"></div>
+            <div class="storm-spot"></div>
         </div>
     </div>
+    
+    <div class="sketch sketch-planet left-2 float-down" style="animation-delay: 0.8s;">
+        <div class="planet-surface rocky-planet">
+            <div class="crater crater-1"></div>
+            <div class="crater crater-2"></div>
+        </div>
+    </div>
+    
+    <div class="sketch sketch-planet left-3 float-up" style="animation-delay: 1.5s;">
+        <div class="planet-surface ice-planet"></div>
+        <div class="planet-ring"></div>
+    </div>
+    
+    <div class="sketch asteroid-belt left-4 float-down" style="animation-delay: 2.2s;">
+        <div class="asteroid asteroid-1"></div>
+        <div class="asteroid asteroid-2"></div>
+        <div class="asteroid asteroid-3"></div>
+    </div>
+
+    <div class="sketch sketch-planet left-5 float-up" style="animation-delay: 0.3s;">
+        <div class="planet-surface desert-planet">
+            <div class="sand-dunes"></div>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE PLANETS -->
+    <div class="sketch sketch-planet right-1 float-down" style="animation-delay: 0.5s;">
+        <div class="planet-surface lava-planet">
+            <div class="lava-flows"></div>
+            <div class="volcanic-activity"></div>
+        </div>
+    </div>
+    
+    <div class="sketch sketch-planet right-2 float-up" style="animation-delay: 1.2s;">
+        <div class="planet-surface ocean-planet">
+            <div class="continent continent-1"></div>
+            <div class="continent continent-2"></div>
+        </div>
+        <div class="small-moon"></div>
+    </div>
+    
+    <div class="sketch sketch-planet right-3 float-down" style="animation-delay: 1.9s;">
+        <div class="planet-surface purple-giant">
+            <div class="atmospheric-layers"></div>
+        </div>
+        <div class="planet-ring diagonal-ring"></div>
+    </div>
+
+    <div class="sketch sketch-planet right-4 float-up" style="animation-delay: 2.6s;">
+        <div class="planet-surface forest-planet">
+            <div class="landmass landmass-1"></div>
+            <div class="landmass landmass-2"></div>
+        </div>
+    </div>
+
+    <div class="sketch binary-system right-5 float-down" style="animation-delay: 0.9s;">
+        <div class="planet-surface twin-1"></div>
+        <div class="planet-surface twin-2"></div>
+        <div class="orbital-path"></div>
+    </div>
+
+    <!-- CENTER SCATTERED OBJECTS -->
+    <div class="sketch comet center-1 float-up" style="animation-delay: 3.2s;">
+        <div class="comet-core"></div>
+        <div class="comet-tail"></div>
+    </div>
+
+    <div class="sketch sketch-planet center-2 float-down" style="animation-delay: 1.7s;">
+        <div class="planet-surface crystal-planet">
+            <div class="crystal-formation crystal-1"></div>
+            <div class="crystal-formation crystal-2"></div>
+        </div>
+    </div>
+
+    <div class="sketch space-station center-3 float-up" style="animation-delay: 2.4s;">
+        <div class="station-core"></div>
+        <div class="station-ring"></div>
+        <div class="docking-ports"></div>
+    </div>
+</div>
+
+<!-- ADD THIS CSS TO YOUR EXISTING STYLES (REPLACE any existing sketch positioning) -->
+<style>
+/* EXPLICIT LEFT SIDE POSITIONING */
+.left-1 { 
+    width: 180px; 
+    height: 180px; 
+    position: absolute;
+    left: 2% !important; 
+    top: 10% !important; 
+}
+
+.left-2 { 
+    width: 140px; 
+    height: 140px; 
+    position: absolute;
+    left: 6% !important; 
+    top: 40% !important; 
+}
+
+.left-3 { 
+    width: 160px; 
+    height: 160px; 
+    position: absolute;
+    left: 1% !important; 
+    top: 70% !important; 
+}
+
+.left-4 { 
+    width: 120px; 
+    height: 120px; 
+    position: absolute;
+    left: 8% !important; 
+    top: 25% !important; 
+}
+
+.left-5 { 
+    width: 100px; 
+    height: 100px; 
+    position: absolute;
+    left: 4% !important; 
+    top: 85% !important; 
+}
+
+/* EXPLICIT RIGHT SIDE POSITIONING */
+.right-1 { 
+    width: 170px; 
+    height: 170px; 
+    position: absolute;
+    right: 3% !important; 
+    top: 8% !important; 
+}
+
+.right-2 { 
+    width: 150px; 
+    height: 150px; 
+    position: absolute;
+    right: 7% !important; 
+    top: 35% !important; 
+}
+
+.right-3 { 
+    width: 190px; 
+    height: 190px; 
+    position: absolute;
+    right: 2% !important; 
+    top: 60% !important; 
+}
+
+.right-4 { 
+    width: 130px; 
+    height: 130px; 
+    position: absolute;
+    right: 9% !important; 
+    top: 80% !important; 
+}
+
+.right-5 { 
+    width: 160px; 
+    height: 110px; 
+    position: absolute;
+    right: 5% !important; 
+    top: 15% !important; 
+}
+
+/* CENTER POSITIONING */
+.center-1 { 
+    width: 140px; 
+    height: 80px; 
+    position: absolute;
+    left: 35% !important; 
+    top: 12% !important; 
+}
+
+.center-2 { 
+    width: 110px; 
+    height: 110px; 
+    position: absolute;
+    right: 30% !important; 
+    top: 45% !important; 
+}
+
+.center-3 { 
+    width: 120px; 
+    height: 120px; 
+    position: absolute;
+    left: 40% !important; 
+    top: 75% !important; 
+}
+
+/* Planet Surface Styles */
+.gas-giant {
+    background: 
+        linear-gradient(45deg, transparent 30%, rgba(107, 70, 193, 0.06) 50%, transparent 70%),
+        linear-gradient(135deg, rgba(107, 70, 193, 0.04) 20%, transparent 40%, rgba(107, 70, 193, 0.08) 80%);
+}
+
+.gas-bands {
+    position: absolute;
+    width: 100%;
+    height: 20%;
+    top: 40%;
+    background: linear-gradient(90deg, 
+        transparent 10%, 
+        rgba(107, 70, 193, 0.1) 30%, 
+        rgba(107, 70, 193, 0.05) 50%, 
+        rgba(107, 70, 193, 0.1) 70%, 
+        transparent 90%);
+    border-radius: 50%;
+}
+
+.storm-spot {
+    position: absolute;
+    width: 25%;
+    height: 35%;
+    top: 30%;
+    right: 20%;
+    background: rgba(107, 70, 193, 0.08);
+    border-radius: 50%;
+    border: 1px solid rgba(107, 70, 193, 0.15);
+}
+
+.rocky-planet {
+    background: 
+        radial-gradient(circle at 25% 25%, transparent 15%, rgba(107, 70, 193, 0.04) 40%),
+        radial-gradient(circle at 75% 60%, transparent 20%, rgba(107, 70, 193, 0.06) 50%);
+}
+
+.crater {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(107, 70, 193, 0.12);
+    background: rgba(107, 70, 193, 0.03);
+}
+
+.crater-1 { width: 20%; height: 20%; top: 25%; left: 30%; }
+.crater-2 { width: 15%; height: 15%; top: 55%; left: 60%; }
+
+.ice-planet {
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(107, 70, 193, 0.02) 20%, transparent 50%),
+        linear-gradient(45deg, transparent 40%, rgba(107, 70, 193, 0.04) 60%, transparent 80%);
+    border: 1px solid rgba(107, 70, 193, 0.08);
+}
+
+.desert-planet {
+    background: 
+        radial-gradient(ellipse at 40% 20%, transparent 30%, rgba(107, 70, 193, 0.05) 70%),
+        linear-gradient(30deg, rgba(107, 70, 193, 0.03) 30%, transparent 70%);
+}
+
+.sand-dunes {
+    position: absolute;
+    width: 80%;
+    height: 40%;
+    bottom: 20%;
+    left: 10%;
+    background: linear-gradient(180deg, transparent 0%, rgba(107, 70, 193, 0.06) 100%);
+    border-radius: 0 0 50% 50%;
+}
+
+.lava-planet {
+    background: 
+        radial-gradient(circle at 60% 40%, rgba(107, 70, 193, 0.08) 20%, transparent 50%),
+        linear-gradient(135deg, rgba(107, 70, 193, 0.06) 30%, transparent 70%);
+}
+
+.lava-flows {
+    position: absolute;
+    width: 40%;
+    height: 60%;
+    top: 20%;
+    right: 15%;
+    background: linear-gradient(45deg, 
+        transparent 20%, 
+        rgba(107, 70, 193, 0.1) 40%, 
+        transparent 60%);
+    border-radius: 20% 80% 60% 40% / 30% 70% 30% 70%;
+}
+
+.volcanic-activity {
+    position: absolute;
+    width: 15%;
+    height: 15%;
+    top: 30%;
+    right: 25%;
+    background: rgba(107, 70, 193, 0.12);
+    border-radius: 50%;
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.ocean-planet {
+    background: 
+        radial-gradient(circle at 40% 30%, rgba(107, 70, 193, 0.03) 30%, transparent 60%),
+        linear-gradient(90deg, rgba(107, 70, 193, 0.02) 20%, transparent 80%);
+}
+
+.continent {
+    position: absolute;
+    background: rgba(107, 70, 193, 0.06);
+    border: 1px solid rgba(107, 70, 193, 0.08);
+}
+
+.continent-1 {
+    width: 35%;
+    height: 45%;
+    top: 20%;
+    left: 15%;
+    border-radius: 40% 60% 30% 70% / 50% 30% 70% 50%;
+}
+
+.continent-2 {
+    width: 25%;
+    height: 30%;
+    bottom: 25%;
+    right: 20%;
+    border-radius: 60% 40% 70% 30% / 40% 60% 40% 60%;
+}
+
+.small-moon {
+    position: absolute;
+    width: 20%;
+    height: 20%;
+    top: -10%;
+    right: -10%;
+    background: rgba(107, 70, 193, 0.04);
+    border: 1px solid rgba(107, 70, 193, 0.1);
+    border-radius: 50%;
+}
+
+.purple-giant {
+    background: 
+        radial-gradient(circle at 30% 70%, rgba(107, 70, 193, 0.08) 20%, transparent 60%),
+        linear-gradient(45deg, rgba(107, 70, 193, 0.05) 40%, transparent 80%);
+}
+
+.atmospheric-layers {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    top: 5%;
+    left: 5%;
+    background: linear-gradient(180deg, 
+        transparent 20%, 
+        rgba(107, 70, 193, 0.03) 40%, 
+        rgba(107, 70, 193, 0.06) 60%, 
+        rgba(107, 70, 193, 0.03) 80%, 
+        transparent 100%);
+    border-radius: 50%;
+}
+
+.diagonal-ring {
+    transform: translate(-50%, -50%) rotateX(75deg) rotateZ(30deg);
+}
+
+.forest-planet {
+    background: 
+        radial-gradient(circle at 50% 50%, rgba(107, 70, 193, 0.04) 30%, transparent 70%),
+        linear-gradient(120deg, rgba(107, 70, 193, 0.02) 50%, transparent 90%);
+}
+
+.landmass {
+    position: absolute;
+    background: rgba(107, 70, 193, 0.07);
+    border: 1px solid rgba(107, 70, 193, 0.1);
+}
+
+.landmass-1 {
+    width: 40%;
+    height: 50%;
+    top: 15%;
+    left: 30%;
+    border-radius: 50% 30% 60% 40% / 40% 70% 30% 60%;
+}
+
+.landmass-2 {
+    width: 30%;
+    height: 35%;
+    bottom: 20%;
+    right: 25%;
+    border-radius: 30% 50% 40% 60% / 60% 40% 70% 30%;
+}
+
+/* Asteroid Belt */
+.asteroid-belt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.asteroid {
+    position: absolute;
+    background: rgba(107, 70, 193, 0.04);
+    border: 1px solid rgba(107, 70, 193, 0.1);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+
+.asteroid-1 { width: 25px; height: 20px; top: -15px; left: -30px; transform: rotate(15deg); }
+.asteroid-2 { width: 18px; height: 22px; top: 10px; right: -25px; transform: rotate(-30deg); }
+.asteroid-3 { width: 20px; height: 16px; bottom: -10px; left: -15px; transform: rotate(45deg); }
+
+/* Binary System */
+.binary-system {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.twin-1, .twin-2 {
+    width: 40%;
+    height: 70%;
+    border-radius: 50%;
+    border: 1px solid rgba(107, 70, 193, 0.1);
+    background: rgba(107, 70, 193, 0.04);
+    position: absolute;
+}
+
+.twin-1 { left: 10%; }
+.twin-2 { right: 10%; }
+
+.orbital-path {
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    border: 1px dashed rgba(107, 70, 193, 0.08);
+    border-radius: 50%;
+}
+
+/* Comet */
+.comet {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.comet-core {
+    width: 15px;
+    height: 15px;
+    background: rgba(107, 70, 193, 0.08);
+    border: 1px solid rgba(107, 70, 193, 0.15);
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+}
+
+.comet-tail {
+    width: 80px;
+    height: 20px;
+    background: linear-gradient(90deg, 
+        rgba(107, 70, 193, 0.06) 0%, 
+        rgba(107, 70, 193, 0.03) 50%, 
+        transparent 100%);
+    border-radius: 50px 0 0 50px;
+    position: absolute;
+    right: 10px;
+    z-index: 1;
+}
+
+/* Crystal Planet */
+.crystal-planet {
+    background: 
+        radial-gradient(circle at 40% 60%, rgba(107, 70, 193, 0.05) 30%, transparent 70%);
+}
+
+.crystal-formation {
+    position: absolute;
+    background: rgba(107, 70, 193, 0.08);
+    border: 1px solid rgba(107, 70, 193, 0.12);
+}
+
+.crystal-1 {
+    width: 25%;
+    height: 40%;
+    top: 30%;
+    left: 20%;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.crystal-2 {
+    width: 20%;
+    height: 35%;
+    top: 25%;
+    right: 25%;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* Space Station */
+.space-station {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.station-core {
+    width: 25%;
+    height: 25%;
+    background: rgba(107, 70, 193, 0.06);
+    border: 1px solid rgba(107, 70, 193, 0.12);
+    border-radius: 10%;
+    position: relative;
+    z-index: 2;
+}
+
+.station-ring {
+    width: 70%;
+    height: 70%;
+    border: 2px solid rgba(107, 70, 193, 0.1);
+    border-radius: 50%;
+    position: absolute;
+    animation: rotate 15s linear infinite;
+}
+
+.docking-ports {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.docking-ports::before,
+.docking-ports::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(107, 70, 193, 0.08);
+    border: 1px solid rgba(107, 70, 193, 0.12);
+    border-radius: 50%;
+}
+
+.docking-ports::before {
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.docking-ports::after {
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes float-up {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes float-down {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(20px); }
+    100% { transform: translateY(0px); }
+}
+
+.float-up {
+    animation: float-up 4s ease-in-out infinite;
+}
+
+.float-down {
+    animation: float-down 4s ease-in-out infinite;
+}
+
+/* Override any existing sketch positioning */
+.sketch {
+    position: absolute !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: transform 0.3s ease-out !important;
+}
+
+/* Debug - temporary borders to see positioning */
+/*
+.left-1, .left-2, .left-3, .left-4, .left-5 { border: 2px solid red !important; }
+.right-1, .right-2, .right-3, .right-4, .right-5 { border: 2px solid blue !important; }
+.center-1, .center-2, .center-3 { border: 2px solid green !important; }
+*/
+</style>
 
     <!-- Main content -->
     <div class="main-content">
