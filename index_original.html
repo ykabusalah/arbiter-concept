@@ -1,0 +1,2654 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Arbiter - Private AI on Your Device</title>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --purple: #6B46C1;
+            --purple-dark: #553C9A;
+            --purple-light: #9F7AEA;
+            --purple-lighter: #E9D8FD;
+            --purple-lightest: #FAF5FF;
+            --white: #FFFFFF;
+            --gray-medium: #6B7280;
+            --gray-light: #9CA3AF;
+            --border-light: #E9D8FD;
+            --bg-light: #FAF5FF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--white);
+            color: var(--purple-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Floating sketches container */
+        .sketches-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .sketch {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease-out;
+        }
+
+        .sketch-planet {
+            border-radius: 50%;
+            position: relative;
+            overflow: visible;
+        }
+
+        .planet-surface {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            border: 1px solid var(--purple-lighter);
+            background: 
+                radial-gradient(circle at 30% 30%, transparent 20%, rgba(107, 70, 193, 0.03) 50%),
+                linear-gradient(180deg, transparent 20%, rgba(107, 70, 193, 0.04) 40%, transparent 60%, rgba(107, 70, 193, 0.03) 80%);
+            overflow: hidden;
+        }
+
+        .planet-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(65deg);
+            width: 150%;
+            height: 150%;
+            border: 1px solid var(--purple-lighter);
+            border-radius: 50%;
+            background: transparent;
+        }
+
+        .planet-ring-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(65deg);
+            width: 130%;
+            height: 130%;
+            border: 1px solid rgba(107, 70, 193, 0.15);
+            border-radius: 50%;
+        }
+
+        /* Enhanced planet positioning - ensuring visibility on both sides */
+        .left-1 { width: 180px; height: 180px; left: 2% !important; top: 10% !important; z-index: 1; }
+        .left-2 { width: 140px; height: 140px; left: 6% !important; top: 40% !important; z-index: 1; }
+        .left-3 { width: 160px; height: 160px; left: 1% !important; top: 70% !important; z-index: 1; }
+        .left-4 { width: 120px; height: 120px; left: 8% !important; top: 25% !important; z-index: 1; }
+        .left-5 { width: 100px; height: 100px; left: 4% !important; top: 85% !important; z-index: 1; }
+
+        .right-1 { width: 170px; height: 170px; right: 3% !important; top: 8% !important; z-index: 1; }
+        .right-2 { width: 150px; height: 150px; right: 7% !important; top: 35% !important; z-index: 1; }
+        .right-3 { width: 190px; height: 190px; right: 2% !important; top: 60% !important; z-index: 1; }
+        .right-4 { width: 130px; height: 130px; right: 9% !important; top: 80% !important; z-index: 1; }
+        .right-5 { width: 160px; height: 110px; right: 5% !important; top: 15% !important; z-index: 1; }
+
+        .center-1 { width: 140px; height: 80px; left: 35% !important; top: 12% !important; z-index: 1; }
+        .center-2 { width: 110px; height: 110px; right: 30% !important; top: 45% !important; z-index: 1; }
+        .center-3 { width: 120px; height: 120px; left: 40% !important; top: 75% !important; z-index: 1; }
+
+        /* Planet types */
+        .gas-giant {
+            background: 
+                linear-gradient(45deg, transparent 30%, rgba(107, 70, 193, 0.06) 50%, transparent 70%),
+                linear-gradient(135deg, rgba(107, 70, 193, 0.04) 20%, transparent 40%, rgba(107, 70, 193, 0.08) 80%);
+        }
+
+        .gas-bands {
+            position: absolute;
+            width: 100%;
+            height: 20%;
+            top: 40%;
+            background: linear-gradient(90deg, 
+                transparent 10%, 
+                rgba(107, 70, 193, 0.1) 30%, 
+                rgba(107, 70, 193, 0.05) 50%, 
+                rgba(107, 70, 193, 0.1) 70%, 
+                transparent 90%);
+            border-radius: 50%;
+        }
+
+        .storm-spot {
+            position: absolute;
+            width: 25%;
+            height: 35%;
+            top: 30%;
+            right: 20%;
+            background: rgba(107, 70, 193, 0.08);
+            border-radius: 50%;
+            border: 1px solid rgba(107, 70, 193, 0.15);
+        }
+
+        .rocky-planet {
+            background: 
+                radial-gradient(circle at 25% 25%, transparent 15%, rgba(107, 70, 193, 0.04) 40%),
+                radial-gradient(circle at 75% 60%, transparent 20%, rgba(107, 70, 193, 0.06) 50%);
+        }
+
+        .crater {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(107, 70, 193, 0.12);
+            background: rgba(107, 70, 193, 0.03);
+        }
+
+        .crater-1 { width: 20%; height: 20%; top: 25%; left: 30%; }
+        .crater-2 { width: 15%; height: 15%; top: 55%; left: 60%; }
+
+        .ice-planet {
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(107, 70, 193, 0.02) 20%, transparent 50%),
+                linear-gradient(45deg, transparent 40%, rgba(107, 70, 193, 0.04) 60%, transparent 80%);
+            border: 1px solid rgba(107, 70, 193, 0.08);
+        }
+
+        .desert-planet {
+            background: 
+                radial-gradient(ellipse at 40% 20%, transparent 30%, rgba(107, 70, 193, 0.05) 70%),
+                linear-gradient(30deg, rgba(107, 70, 193, 0.03) 30%, transparent 70%);
+        }
+
+        .sand-dunes {
+            position: absolute;
+            width: 80%;
+            height: 40%;
+            bottom: 20%;
+            left: 10%;
+            background: linear-gradient(180deg, transparent 0%, rgba(107, 70, 193, 0.06) 100%);
+            border-radius: 0 0 50% 50%;
+        }
+
+        .asteroid-belt {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .asteroid {
+            position: absolute;
+            background: rgba(107, 70, 193, 0.04);
+            border: 1px solid rgba(107, 70, 193, 0.1);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+
+        .asteroid-1 { width: 25px; height: 20px; top: -15px; left: -30px; transform: rotate(15deg); }
+        .asteroid-2 { width: 18px; height: 22px; top: 10px; right: -25px; transform: rotate(-30deg); }
+        .asteroid-3 { width: 20px; height: 16px; bottom: -10px; left: -15px; transform: rotate(45deg); }
+
+        .lava-planet {
+            background: 
+                radial-gradient(circle at 60% 40%, rgba(107, 70, 193, 0.08) 20%, transparent 50%),
+                linear-gradient(135deg, rgba(107, 70, 193, 0.06) 30%, transparent 70%);
+        }
+
+        .lava-flows {
+            position: absolute;
+            width: 40%;
+            height: 60%;
+            top: 20%;
+            right: 15%;
+            background: linear-gradient(45deg, 
+                transparent 20%, 
+                rgba(107, 70, 193, 0.1) 40%, 
+                transparent 60%);
+            border-radius: 20% 80% 60% 40% / 30% 70% 30% 70%;
+        }
+
+        .volcanic-activity {
+            position: absolute;
+            width: 15%;
+            height: 15%;
+            top: 30%;
+            right: 25%;
+            background: rgba(107, 70, 193, 0.12);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .ocean-planet {
+            background: 
+                radial-gradient(circle at 40% 30%, rgba(107, 70, 193, 0.03) 30%, transparent 60%),
+                linear-gradient(90deg, rgba(107, 70, 193, 0.02) 20%, transparent 80%);
+        }
+
+        .continent {
+            position: absolute;
+            background: rgba(107, 70, 193, 0.06);
+            border: 1px solid rgba(107, 70, 193, 0.08);
+        }
+
+        .continent-1 {
+            width: 35%;
+            height: 45%;
+            top: 20%;
+            left: 15%;
+            border-radius: 40% 60% 30% 70% / 50% 30% 70% 50%;
+        }
+
+        .continent-2 {
+            width: 25%;
+            height: 30%;
+            bottom: 25%;
+            right: 20%;
+            border-radius: 60% 40% 70% 30% / 40% 60% 40% 60%;
+        }
+
+        .small-moon {
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            top: -10%;
+            right: -10%;
+            background: rgba(107, 70, 193, 0.04);
+            border: 1px solid rgba(107, 70, 193, 0.1);
+            border-radius: 50%;
+        }
+
+        .purple-giant {
+            background: 
+                radial-gradient(circle at 30% 70%, rgba(107, 70, 193, 0.08) 20%, transparent 60%),
+                linear-gradient(45deg, rgba(107, 70, 193, 0.05) 40%, transparent 80%);
+        }
+
+        .atmospheric-layers {
+            position: absolute;
+            width: 90%;
+            height: 90%;
+            top: 5%;
+            left: 5%;
+            background: linear-gradient(180deg, 
+                transparent 20%, 
+                rgba(107, 70, 193, 0.03) 40%, 
+                rgba(107, 70, 193, 0.06) 60%, 
+                rgba(107, 70, 193, 0.03) 80%, 
+                transparent 100%);
+            border-radius: 50%;
+        }
+
+        .diagonal-ring {
+            transform: translate(-50%, -50%) rotateX(75deg) rotateZ(30deg);
+        }
+
+        .forest-planet {
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(107, 70, 193, 0.04) 30%, transparent 70%),
+                linear-gradient(120deg, rgba(107, 70, 193, 0.02) 50%, transparent 90%);
+        }
+
+        .landmass {
+            position: absolute;
+            background: rgba(107, 70, 193, 0.07);
+            border: 1px solid rgba(107, 70, 193, 0.1);
+        }
+
+        .landmass-1 {
+            width: 40%;
+            height: 50%;
+            top: 15%;
+            left: 30%;
+            border-radius: 50% 30% 60% 40% / 40% 70% 30% 60%;
+        }
+
+        .landmass-2 {
+            width: 30%;
+            height: 35%;
+            bottom: 20%;
+            right: 25%;
+            border-radius: 30% 50% 40% 60% / 60% 40% 70% 30%;
+        }
+
+        .binary-system {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .twin-1, .twin-2 {
+            width: 40%;
+            height: 70%;
+            border-radius: 50%;
+            border: 1px solid rgba(107, 70, 193, 0.1);
+            background: rgba(107, 70, 193, 0.04);
+            position: absolute;
+        }
+
+        .twin-1 { left: 10%; }
+        .twin-2 { right: 10%; }
+
+        .orbital-path {
+            position: absolute;
+            width: 100%;
+            height: 80%;
+            border: 1px dashed rgba(107, 70, 193, 0.08);
+            border-radius: 50%;
+        }
+
+        .comet {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .comet-core {
+            width: 15px;
+            height: 15px;
+            background: rgba(107, 70, 193, 0.08);
+            border: 1px solid rgba(107, 70, 193, 0.15);
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .comet-tail {
+            width: 80px;
+            height: 20px;
+            background: linear-gradient(90deg, 
+                rgba(107, 70, 193, 0.06) 0%, 
+                rgba(107, 70, 193, 0.03) 50%, 
+                transparent 100%);
+            border-radius: 50px 0 0 50px;
+            position: absolute;
+            right: 10px;
+            z-index: 1;
+        }
+
+        .crystal-planet {
+            background: 
+                radial-gradient(circle at 40% 60%, rgba(107, 70, 193, 0.05) 30%, transparent 70%);
+        }
+
+        .crystal-formation {
+            position: absolute;
+            background: rgba(107, 70, 193, 0.08);
+            border: 1px solid rgba(107, 70, 193, 0.12);
+        }
+
+        .crystal-1 {
+            width: 25%;
+            height: 40%;
+            top: 30%;
+            left: 20%;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        .crystal-2 {
+            width: 20%;
+            height: 35%;
+            top: 25%;
+            right: 25%;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        .space-station {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .station-core {
+            width: 25%;
+            height: 25%;
+            background: rgba(107, 70, 193, 0.06);
+            border: 1px solid rgba(107, 70, 193, 0.12);
+            border-radius: 10%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .station-ring {
+            width: 70%;
+            height: 70%;
+            border: 2px solid rgba(107, 70, 193, 0.1);
+            border-radius: 50%;
+            position: absolute;
+            animation: rotate 15s linear infinite;
+        }
+
+        .docking-ports {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .docking-ports::before,
+        .docking-ports::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(107, 70, 193, 0.08);
+            border: 1px solid rgba(107, 70, 193, 0.12);
+            border-radius: 50%;
+        }
+
+        .docking-ports::before {
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .docking-ports::after {
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes float-down {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .float-up {
+            animation: float-up 4s ease-in-out infinite;
+        }
+
+        .float-down {
+            animation: float-down 4s ease-in-out infinite;
+        }
+
+        /* Main content wrapper */
+        .main-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--purple);
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--purple);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: var(--purple-lightest);
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--gray-medium);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .nav-links a:hover {
+            color: var(--purple);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 3rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 0 4rem;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 6vw, 4.5rem);
+            font-weight: 300;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            color: var(--purple);
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--gray-medium);
+            margin-bottom: 3rem;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
+        /* Beta Form */
+        .beta-section {
+            margin-bottom: 3rem;
+        }
+
+        .beta-label {
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--purple);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .btn-primary {
+            padding: 1rem 2rem;
+            background: var(--purple);
+            color: var(--white);
+            border: 1px solid var(--purple);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border-radius: 6px;
+        }
+
+        .btn-primary:hover {
+            background: var(--purple-dark);
+            border-color: var(--purple-dark);
+        }
+
+        /* Slideshow Section */
+        .slideshow-section {
+            margin: 4rem 0;
+            text-align: center;
+        }
+
+        .slideshow-container {
+            max-width: 700px;
+            margin: 2rem auto 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(107, 70, 193, 0.1);
+            border: 2px solid var(--border-light);
+            background: var(--white);
+            position: relative;
+        }
+
+        .slideshow-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            background: var(--bg-light);
+        }
+
+        .slide-placeholder {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, var(--purple-lightest) 0%, var(--bg-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-medium);
+            font-style: italic;
+            border-radius: 8px;
+            border: 1px dashed var(--purple-lighter);
+        }
+
+        .slide img {
+            width: 100%;
+            height: 500px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .slideshow-controls {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border-light);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--purple);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .slideshow-controls:hover {
+            background: var(--white);
+            box-shadow: 0 4px 12px rgba(107, 70, 193, 0.15);
+            color: var(--purple-dark);
+        }
+
+        .prev {
+            left: 1rem;
+        }
+
+        .next {
+            right: 1rem;
+        }
+
+        .slideshow-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--purple-lighter);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dot.active,
+        .dot:hover {
+            background: var(--purple);
+            border-color: var(--purple);
+        }
+
+        .slideshow-caption {
+            padding: 1.5rem 2rem;
+            background: var(--white);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .caption-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--purple-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .caption-text {
+            color: var(--gray-medium);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Mission Section */
+        .mission {
+            padding: 8rem 0;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-light);
+        }
+
+        .mission-content {
+            max-width: 800px;
+            margin: 2rem auto 0;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            font-weight: 300;
+            color: var(--purple-dark);
+            text-align: center;
+        }
+
+        /* Team Section */
+        .team {
+            padding: 8rem 0;
+            border-top: 1px solid var(--border-light);
+            background: var(--white);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .team-member {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 2rem 1.5rem;
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
+            background: var(--white);
+            box-shadow: 0 4px 12px rgba(107, 70, 193, 0.04);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .team-member:hover {
+            transform: translateY(-8px);
+            border-color: var(--purple-light);
+            box-shadow: 0 8px 25px rgba(107, 70, 193, 0.15);
+        }
+
+        .team-photo {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-light);
+            margin: 0 auto 1.5rem;
+            display: block;
+            background: var(--bg-light);
+        }
+
+        .team-member h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: var(--purple-dark);
+        }
+
+        .team-member .role {
+            color: var(--gray-medium);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .team-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .team-links a {
+            color: var(--purple);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .team-links a:hover {
+            color: var(--purple-dark);
+        }
+
+        /* Modal backdrop */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 9998;
+        }
+
+        .modal-backdrop.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            width: min(92vw, 500px);
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            padding: 2rem;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.open .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 0;
+        }
+
+        .modal-close {
+            border: none;
+            background: transparent;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+            color: var(--gray-medium);
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--purple-dark);
+            background: #F3F4F6;
+        }
+
+        /* Team Modal Styles */
+        .team-modal-content {
+            max-width: 550px;
+            padding: 2rem;
+        }
+
+        .team-modal-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--border-light);
+            margin: 0 auto 1.5rem;
+            display: block;
+            box-shadow: 0 4px 12px rgba(107, 70, 193, 0.1);
+        }
+
+        .team-modal-name {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: var(--purple-dark);
+            text-align: center;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .team-modal-role {
+            color: var(--purple);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .team-social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1rem 0;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .social-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--gray-medium);
+            transition: all 0.2s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: var(--purple-lightest);
+            border: 1px solid var(--border-light);
+            min-width: 80px;
+        }
+
+        .social-link:hover {
+            color: var(--purple);
+            background: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107, 70, 193, 0.15);
+        }
+
+        .social-icon {
+            font-size: 1.5rem;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background: var(--white);
+            border: 1px solid var(--border-light);
+        }
+
+        .social-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .social-link.linkedin .social-icon {
+            background: #0077B5;
+            color: white;
+            border-color: #0077B5;
+        }
+
+        .social-link.linkedin:hover .social-icon {
+            background: #005885;
+        }
+
+        .social-link.email .social-icon {
+            background: var(--purple);
+            color: white;
+            border-color: var(--purple);
+        }
+
+        .social-link.email:hover .social-icon {
+            background: var(--purple-dark);
+        }
+
+        .social-link.github .social-icon {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+
+        .social-link.github:hover .social-icon {
+            background: #000;
+        }
+
+        .social-link.website .social-icon {
+            background: #10B981;
+            color: white;
+            border-color: #10B981;
+        }
+
+        .social-link.website:hover .social-icon {
+            background: #059669;
+        }
+
+        .team-modal-bio {
+            color: var(--gray-medium);
+            line-height: 1.6;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        /* Beta Modal Styles */
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--purple-dark);
+            margin: 0;
+        }
+
+        .beta-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--purple-dark);
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            padding: 0.75rem;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
+        }
+
+        .success-msg {
+            display: none;
+            color: #218838;
+            font-weight: 500;
+            padding: 1rem;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .error-msg {
+            display: none;
+            color: #721c24;
+            font-weight: 500;
+            padding: 1rem;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 8rem 0;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-light);
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 2rem;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .faq-question {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--purple-dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .faq-answer {
+            color: var(--gray-medium);
+            line-height: 1.6;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 0;
+            border-top: 1px solid var(--border-light);
+            background: var(--white);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 4rem;
+            letter-spacing: -0.02em;
+            text-align: center;
+            color: var(--purple);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 4rem 3rem;
+        }
+
+        .feature {
+            position: relative;
+            text-align: center;
+        }
+
+        .feature h3 {
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+            color: var(--purple-dark);
+        }
+
+        .feature p {
+            color: var(--gray-medium);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 0;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+            background: var(--white);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .footer-contact {
+            color: var(--purple);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-contact:hover {
+            color: var(--purple-dark);
+        }
+
+        .footer-copyright {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1.5rem;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .nav-container {
+                padding: 0 1.5rem;
+                width: 100%;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 6rem 0 4rem;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .hero-content {
+                width: 100%;
+                max-width: 100%;
+                text-align: center;
+                padding: 0;
+            }
+
+            .sketches-container {
+                display: none;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .team-member {
+                padding: 1.5rem 1rem;
+                margin: 0 auto;
+                max-width: 300px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+                text-align: center;
+                margin-bottom: 2rem;
+                padding: 0 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+                text-align: center;
+            }
+
+            .modal-card {
+                padding: 1.5rem;
+                border-radius: 12px;
+                margin: 1rem;
+                width: calc(100% - 2rem);
+            }
+
+            .slideshow-container {
+                margin: 1.5rem auto 0;
+                max-width: 100%;
+            }
+
+            .slide {
+                padding: 2rem 1rem;
+            }
+
+            .slide-placeholder,
+            .slide img {
+                height: 400px;
+            }
+
+            .slideshow-controls {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .prev {
+                left: 0.5rem;
+            }
+
+            .next {
+                right: 0.5rem;
+            }
+
+            .slideshow-caption {
+                padding: 1rem 1.5rem;
+                text-align: center;
+            }
+
+            .mission-content {
+                font-size: 1.2rem;
+                text-align: center;
+                padding: 0 1rem;
+            }
+
+            .faq-list {
+                padding: 0 1rem;
+            }
+
+            .footer-content {
+                text-align: center;
+                padding: 0 1rem;
+            }
+
+            .logo {
+                justify-content: center;
+            }
+
+            .beta-section {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .beta-label {
+                text-align: center;
+            }
+
+            .team-social-links {
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .social-link {
+                min-width: 70px;
+                padding: 0.5rem 0.75rem;
+            }
+            
+            .social-icon {
+                font-size: 1.2rem;
+                width: 25px;
+                height: 25px;
+            }
+            
+            .team-modal-content {
+                padding: 1.5rem;
+            }
+            
+            .team-modal-name {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+                padding: 0 0.5rem;
+            }
+
+            .hero {
+                padding: 5rem 0 3rem;
+            }
+
+            .hero-content {
+                padding: 0 0.5rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .modal-card {
+                margin: 0.5rem;
+                width: calc(100% - 1rem);
+                padding: 1rem;
+            }
+
+            .slideshow-caption {
+                padding: 1rem;
+            }
+
+            .caption-title {
+                font-size: 1rem;
+            }
+
+            .caption-text {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Floating sketches container -->
+
+<!-- Main content -->
+<div class="main-content">
+<!-- Navigation -->
+<nav>
+<div class="nav-container">
+<a class="logo" href="#">
+<div class="logo-icon">A</div>
+<span>Arbiter</span>
+</a>
+<ul class="nav-links">
+<li><a href="#features">Features</a></li>
+<li><a href="#mission">Mission</a></li>
+<li><a href="#team">Team</a></li>
+<li><a href="#faq">FAQ</a></li>
+<li><a href="#contact">Contact</a></li>
+</ul>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="hero">
+<div class="container">
+<div class="hero-content">
+<h1>A.I. designed for you, only for you.</h1>
+<p class="tagline">
+                        Run powerful language models locally. Keep your conversations private. 
+                        Switch between models without reinstalling.
+                    </p>
+<div class="beta-section">
+<label class="beta-label">Join the TestFlight Beta</label>
+<div style="display:flex;justify-content:center;margin-top:10px;">
+<button class="btn-primary" onclick="openBetaModal()" type="button">Request Invite</button>
+</div>
+</div>
+<div class="slideshow-section">
+<h3 style="color: var(--purple); margin-bottom: 1rem;">See Arbiter in Action</h3>
+<div class="slideshow-container">
+<div class="slideshow-wrapper">
+<div class="slides" id="slides">
+<div class="slide">
+<img alt="AI Chat Interface showing poetry conversation" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" src="./assets/screenshot-1.png"/>
+<div class="slide-placeholder" style="display:none;">Screenshot 1: Creative AI Conversations</div>
+</div>
+<div class="slide">
+<img alt="Settings screen with model selection" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" src="./assets/screenshot-2.png"/>
+<div class="slide-placeholder" style="display:none;">Screenshot 2: Model Settings</div>
+</div>
+<div class="slide">
+<img alt="Technical conversation with keyboard visible" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" src="./assets/screenshot-3.jpeg"/>
+<div class="slide-placeholder" style="display:none;">Screenshot 3: Technical Conversations</div>
+</div>
+<div class="slide">
+<img alt="Code generation showing merge sort algorithm" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" src="./assets/screenshot-4.png"/>
+<div class="slide-placeholder" style="display:none;">Screenshot 4: Code Generation</div>
+</div>
+</div>
+<button class="slideshow-controls prev" onclick="changeSlide(-1)">‹</button>
+<button class="slideshow-controls next" onclick="changeSlide(1)">›</button>
+</div>
+<div class="slideshow-dots">
+<span class="dot active" onclick="goToSlide(0)"></span>
+<span class="dot" onclick="goToSlide(1)"></span>
+<span class="dot" onclick="goToSlide(2)"></span>
+<span class="dot" onclick="goToSlide(3)"></span>
+</div>
+<div class="slideshow-caption">
+<div class="caption-title" id="caption-title">Creative AI Conversations</div>
+<div class="caption-text" id="caption-text">Engage in creative writing, poetry, and artistic projects with AI models running locally on your device.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Section -->
+<section class="features" id="features">
+<div class="container">
+<h2 class="section-title">Key Features</h2>
+<div class="features-grid">
+<div class="feature">
+<h3>Flexible Model Management</h3>
+<p>Download and switch between on-device AI models like LLaMA and Whisper. Add new models without reinstalling the app.</p>
+</div>
+<div class="feature">
+<h3>Private, Persistent Conversations</h3>
+<p>All chats are stored locally for full privacy and ownership. Conversations are searchable and exportable.</p>
+</div>
+<div class="feature">
+<h3>Hybrid Inference Engine</h3>
+<p>Run AI entirely on-device by default for speed and privacy, with the option to switch to cloud APIs for more power.</p>
+</div>
+<div class="feature">
+<h3>Real-Time Search Augmentation</h3>
+<p>Integrate fresh web results directly into your conversations for up-to-the-minute insights and updates.</p>
+</div>
+<div class="feature">
+<h3>Multimodal Input &amp; Accessibility</h3>
+<p>Speak to Arbiter with voice-to-text, and soon listen with text-to-speech—ideal for accessibility and multitasking.</p>
+</div>
+<div class="feature">
+<h3>Open Source Foundation</h3>
+<p>Built on open standards and protocols. Contribute to the future of private AI or build your own extensions.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Mission Section -->
+<section class="mission" id="mission">
+<div class="container">
+<h2 class="section-title">Our Mission</h2>
+<div class="mission-content">
+<p>Arbiter is redefining the future of AI chat. We believe in empowering individuals and organizations with tools that offer choice, control, and clarity. By running AI locally and giving users ownership of their data, Arbiter puts privacy and power back into your hands.</p>
+</div>
+</div>
+</section>
+<!-- Team Section -->
+<section class="team" id="team">
+<div class="container">
+<h2 class="section-title">Team</h2>
+<div class="team-grid">
+<div class="team-member" onclick="openTeamModal('jordan')">
+<img alt="Headshot of Jordan Stone" class="team-photo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiNGQUY1RkYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiI+CjxwYXRoIGQ9Im0yMCAyMS12LTJhNCA0IDAgMCAwLTQtNEg4YTQgNCAwIDAgMC00IDR2MiIvPgo8Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiLz4KPC9zdmc+CjxzdmcgZmlsbD0iIzZCNzI4MCIgZm9udC1zaXplPSIxMnB4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgeD0iMjQiIHk9Ijc2Ij48dGV4dD5KUzwvdGV4dD48L3N2Zz4KPC9zdmc+';" src="./assets/jordan-stone.jpg"/>
+<h3>Jordan Stone</h3>
+<p class="role">Founder (CEO/CTO)</p>
+<div class="team-links">
+<a href="#" onclick="event.stopPropagation()">LinkedIn</a>
+<a href="mailto:jordan@askarbiter.ai" onclick="event.stopPropagation()">Email</a>
+</div>
+</div>
+<div class="team-member" onclick="openTeamModal('yousef')">
+<img alt="Headshot of Yousef Abu-Salah" class="team-photo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiNGQUY1RkYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiI+CjxwYXRoIGQ9Im0yMCAyMS12LTJhNCA0IDAgMCAwLTQtNEg4YTQgNCAwIDAgMC00IDR2MiIvPgo8Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiLz4KPC9zdmc+CjxzdmcgZmlsbD0iIzZCNzI4MCIgZm9udC1zaXplPSIxMnB4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgeD0iMjQiIHk9Ijc2Ij48dGV4dD5ZQVM8L3RleHQ+PC9zdmc+CjwvYXNnPg==';" src="./assets/yousef-abu-salah.jpg"/>
+<h3>Yousef Abu Salah</h3>
+<p class="role">Chief Design Officer (CDO)</p>
+<div class="team-links">
+<a href="#" onclick="event.stopPropagation()">LinkedIn</a>
+<a href="mailto:yousef@askarbiter.ai" onclick="event.stopPropagation()">Email</a>
+</div>
+</div>
+<div class="team-member" onclick="openTeamModal('harpreet')">
+<img alt="Headshot of Harpreet Singh" class="team-photo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiNGQUY1RkYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiI+CjxwYXRoIGQ9Im0yMCAyMS12LTJhNCA0IDAgMCAwLTQtNEg4YTQgNCAwIDAgMC00IDR2MiIvPgo8Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiLz4KPC9zdmc+CjxzdmcgZmlsbD0iIzZCNzI4MCIgZm9udC1zaXplPSIxMnB4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgeD0iMjQiIHk9Ijc2Ij48dGV4dD5IUzwvdGV4dD48L3N2Zz4KPC9zdmc+';" src="./assets/harpreet-singh.jpg"/>
+<h3>Harpreet Singh</h3>
+<p class="role">Chief Financial Officer (CFO)</p>
+<div class="team-links">
+<a href="#" onclick="event.stopPropagation()">LinkedIn</a>
+<a href="mailto:harpreet@askarbiter.ai" onclick="event.stopPropagation()">Email</a>
+</div>
+</div>
+<div class="team-member" onclick="openTeamModal('smith')">
+<img alt="Headshot of Smith Patel" class="team-photo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDgiIGN5PSI0OCIgcj0iNDgiIGZpbGw9IiNGQUY1RkYiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5Q0EzQUYiIHN0cm9rZS13aWR0aD0iMiI+CjxwYXRoIGQ9Im0yMCAyMS12LTJhNCA0IDAgMCAwLTQtNEg4YTQgNCAwIDAgMC00IDR2MiIvPgo8Y2lyY2xlIGN4PSIxMiIgY3k9IjciIHI9IjQiLz4KPC9zdmc+CjxzdmcgZmlsbD0iIzZCNzI4MCIgZm9udC1zaXplPSIxMnB4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgeD0iMjQiIHk9Ijc2Ij48dGV4dD5TUDY8L3RleHQ+PC9zdmc+CjxzdmcgZmlsbD0iIzZCNzI4MCIgZm9udC1zaXplPSIxMnB4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgeD0iMjQiIHk9Ijc2Ij48dGV4dD5TUDY8L3RleHQ+PC9zdmc+CjwvYXNnPg==';" src="./assets/smith-patel.jpg"/>
+<h3>Smith Patel</h3>
+<p class="role">Chief Operating Officer (COO)</p>
+<div class="team-links">
+<a href="#" onclick="event.stopPropagation()">LinkedIn</a>
+<a href="mailto:smith@askarbiter.ai" onclick="event.stopPropagation()">Email</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="faq" id="faq">
+<div class="container">
+<h2 class="section-title">FAQ</h2>
+<div class="faq-list">
+<div class="faq-item">
+<h3 class="faq-question">Is my data private?</h3>
+<p class="faq-answer">Yes. Everything is processed and stored on your device. Your chats and files never leave your phone unless you explicitly choose to share them. We do not store, log, or sell your data. Your information stays 100% under your control.</p>
+</div>
+<div class="faq-item">
+<h3 class="faq-question">Do I need an internet connection to use the app?</h3>
+<p class="faq-answer">No. Once installed, the app works entirely offline. You can use it on airplanes, in remote areas, or without Wi-Fi, while still getting fast and responsive answers.</p>
+</div>
+<div class="faq-item">
+<h3 class="faq-question">How does offline AI work?</h3>
+<p class="faq-answer">The app uses optimized large language models (LLMs) that run locally on your device's processor. These models are pre-downloaded and don't require server access, which means your requests are processed instantly without sending them to the cloud.</p>
+</div>
+<div class="faq-item">
+<h3 class="faq-question">What devices are supported?</h3>
+<p class="faq-answer">Currently, the app supports modern iPhones and iPads running iOS 16 or later, with best performance on devices equipped with Apple Silicon chips (A14 Bionic or newer). Most models will require a device with more than 4 GB of RAM.</p>
+</div>
+<div class="faq-item">
+<h3 class="faq-question">What AI models are available?</h3>
+<p class="faq-answer">You can choose from a range of open-source LLMs. The app supports switching models at any time so you can balance speed, accuracy, and device performance.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer id="contact">
+<div class="container">
+<div class="footer-content">
+<a class="footer-contact" href="mailto:hello@askarbiter.ai">hello@askarbiter.ai</a>
+<p class="footer-copyright">© 2025 Arbiter Technologies. All rights reserved.</p>
+</div>
+</div>
+</footer>
+</div>
+<!-- Modal backdrop -->
+<div class="modal-backdrop" onclick="closeAllModals()"></div>
+<!-- Team Modal -->
+<div aria-hidden="true" class="modal" id="team-modal">
+<div class="modal-card team-modal-content">
+<div class="modal-header">
+<button class="modal-close" onclick="closeTeamModal()">×</button>
+</div>
+<div id="team-modal-body">
+<!-- Content will be populated by JavaScript -->
+</div>
+</div>
+</div>
+<!-- Beta Modal -->
+<div aria-hidden="true" class="modal" id="beta-modal">
+<div class="modal-card">
+<div class="modal-header">
+<h3 class="modal-title">Join the TestFlight Beta</h3>
+<button class="modal-close" onclick="closeBetaModal()">×</button>
+</div>
+<form class="beta-form" id="beta-form" onsubmit="handleFormSubmit(event)">
+<div class="form-group">
+<label for="full_name">Name*</label>
+<input id="full_name" name="full_name" placeholder="Your full name" required="" type="text"/>
+</div>
+<div class="form-group">
+<label for="email">Email*</label>
+<input id="email" name="email" placeholder="you@example.com" required="" type="email"/>
+</div>
+<button class="btn-primary" type="submit">Request Invite</button>
+<div class="success-msg" id="beta-success"></div>
+<div class="error-msg" id="beta-error"></div>
+</form>
+</div>
+</div>
+<script>
+        // Enhanced team member data
+        const teamData = {
+            jordan: {
+                name: "Jordan Stone",
+                role: "Founder (CEO/CTO)",
+                photo: "./assets/jordan-stone.jpg",
+                bio: "Jordan is a full-stack software engineer with a strong foundation in mobile and backend development, holding a Computer Science degree from Washington University in St. Louis. He has experience building and optimizing production-grade iOS applications and scalable backend systems. Jordan is deeply passionate about building AI technologies that prioritize user privacy and long-term sustainability.",
+                social: {
+                    linkedin: "https://www.linkedin.com/in/jordan-stone-051a25142/",
+                    email: "jordan@askarbiter.ai",
+                    github: "https://github.com/Jordans2299"
+                }
+            },
+            yousef: {
+                name: "Yousef Abu Salah",
+                role: "Chief Design Officer (CDO)",
+                photo: "./assets/yousef-abu-salah.jpg",
+                bio: "Yousef leads design at Arbiter, bringing a passion for creating intuitive, accessible user experiences. His vision ensures that powerful AI capabilities remain approachable and human-centered, making advanced technology accessible to users regardless of their technical background.",
+                social: {
+                    linkedin: "https://www.linkedin.com/in/ykabusalah",
+                    email: "yousef@askarbiter.ai",
+                    github: "https://github.com/ykabusalah",
+                    website: "https://ykabusalah.me"
+                }
+            },
+            harpreet: {
+                name: "Harpreet Singh",
+                role: "Chief Financial Officer (CFO)",
+                photo: "./assets/harpreet-singh.jpg",
+                bio: "Harpreet is a Harvard graduate who brings consulting expertise and diverse perspectives to Arbiter's financial strategy. His background in consulting provides valuable insights that help guide our business decisions and ensure sustainable growth while maintaining our commitment to user privacy and data ownership.",
+                social: {
+                    linkedin: "https://www.linkedin.com/in/harpreet-singh-4937b3163/",
+                    email: "harpreet@askarbiter.ai"
+                }
+            },
+            smith: {
+                name: "Smith Patel",
+                role: "Chief Operating Officer (COO)",
+                photo: "./assets/smith-patel.jpg",
+                bio: "Smith brings operational excellence and strategic insight to Arbiter. With an engineering background from Mississippi State and a passion for technology and innovation, Smith ensures that our vision translates into practical, scalable solutions that serve our users effectively.",
+                social: {
+                    linkedin: "https://www.linkedin.com/in/smith-patel-eit-a-m-asce-0b955714a/",
+                    email: "smith@askarbiter.ai"
+                }
+            }
+        };
+
+        // Slideshow data
+        const slideData = [
+            {
+                title: "Creative AI Conversations",
+                text: "Engage in creative writing, poetry, and artistic projects with AI models running locally on your device."
+            },
+            {
+                title: "Flexible Model Management", 
+                text: "Easily switch between AI models and adjust settings like temperature for different conversation styles."
+            },
+            {
+                title: "Technical Problem Solving",
+                text: "Get help with complex technical topics, data structures, and programming concepts."
+            },
+            {
+                title: "Code Generation & Learning",
+                text: "Generate, review, and learn from code examples in multiple programming languages."
+            }
+        ];
+
+        let currentSlideIndex = 0;
+        let slideshowInterval = null;
+
+        // Beta Modal Functions
+        function openBetaModal() {
+            console.log('Opening beta modal');
+            try {
+                const modal = document.getElementById('beta-modal');
+                const backdrop = document.querySelector('.modal-backdrop');
+                
+                if (modal && backdrop) {
+                    modal.classList.add('open');
+                    backdrop.classList.add('open');
+                    modal.setAttribute('aria-hidden', 'false');
+                    
+                    setTimeout(function() {
+                        const emailInput = document.getElementById('email');
+                        if (emailInput) emailInput.focus();
+                    }, 100);
+                    
+                    console.log('Beta modal opened successfully');
+                } else {
+                    console.error('Beta modal elements not found');
+                }
+            } catch (error) {
+                console.error('Error opening beta modal:', error);
+            }
+        }
+
+        function closeBetaModal() {
+            console.log('Closing beta modal');
+            try {
+                const modal = document.getElementById('beta-modal');
+                const backdrop = document.querySelector('.modal-backdrop');
+                
+                if (modal && backdrop) {
+                    modal.classList.remove('open');
+                    backdrop.classList.remove('open');
+                    modal.setAttribute('aria-hidden', 'true');
+                    console.log('Beta modal closed successfully');
+                }
+            } catch (error) {
+                console.error('Error closing beta modal:', error);
+            }
+        }
+
+        // Team Modal Functions
+        function openTeamModal(memberKey) {
+            console.log('Opening team modal for:', memberKey);
+            try {
+                const member = teamData[memberKey];
+                if (!member) {
+                    console.error('Team member not found:', memberKey);
+                    return;
+                }
+
+                const modal = document.getElementById('team-modal');
+                const backdrop = document.querySelector('.modal-backdrop');
+                const modalBody = document.getElementById('team-modal-body');
+                
+                if (modal && backdrop && modalBody) {
+                    // Build social links HTML
+                    let socialLinksHTML = '<div class="team-social-links">';
+                    
+                    if (member.social.linkedin) {
+                        socialLinksHTML += `
+                            <a href="${member.social.linkedin}" class="social-link linkedin" target="_blank" onclick="event.stopPropagation()">
+                                <div class="social-icon">💼</div>
+                                <span class="social-label">LinkedIn</span>
+                            </a>
+                        `;
+                    }
+                    
+                    if (member.social.email) {
+                        socialLinksHTML += `
+                            <a href="mailto:${member.social.email}" class="social-link email" onclick="event.stopPropagation()">
+                                <div class="social-icon">✉️</div>
+                                <span class="social-label">Email</span>
+                            </a>
+                        `;
+                    }
+                    
+                    if (member.social.github) {
+                        socialLinksHTML += `
+                            <a href="${member.social.github}" class="social-link github" target="_blank" onclick="event.stopPropagation()">
+                                <div class="social-icon">💻</div>
+                                <span class="social-label">GitHub</span>
+                            </a>
+                        `;
+                    }
+                    
+                    if (member.social.website) {
+                        socialLinksHTML += `
+                            <a href="${member.social.website}" class="social-link website" target="_blank" onclick="event.stopPropagation()">
+                                <div class="social-icon">🌐</div>
+                                <span class="social-label">Website</span>
+                            </a>
+                        `;
+                    }
+                    
+                    socialLinksHTML += '</div>';
+                    
+                    modalBody.innerHTML = `
+                        <img class="team-modal-photo" src="${member.photo}" alt="${member.name}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNjAiIHI9IjYwIiBmaWxsPSIjRkFGNUZGIi8+CjxzdmcgeD0iMzYiIHk9IjM2IiB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOUNBM0FGIiBzdHJva2Utd2lkdGg9IjIiPgo8cGF0aCBkPSJtMjAgMjEtdi0yYTQgNCAwIDAgMC00LTRIOGE0IDQgMCAwIDAtNCA0djIiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSI3IiByPSI0Ii8+Cjwvc3ZnPgo8L3N2Zz4K';">
+                        <h3 class="team-modal-name">${member.name}</h3>
+                        <p class="team-modal-role">${member.role}</p>
+                        ${socialLinksHTML}
+                        <p class="team-modal-bio">${member.bio}</p>
+                    `;
+                    
+                    modal.classList.add('open');
+                    backdrop.classList.add('open');
+                    modal.setAttribute('aria-hidden', 'false');
+                    
+                    console.log('Team modal opened successfully');
+                } else {
+                    console.error('Team modal elements not found');
+                }
+            } catch (error) {
+                console.error('Error opening team modal:', error);
+            }
+        }
+
+        function closeTeamModal() {
+            console.log('Closing team modal');
+            try {
+                const modal = document.getElementById('team-modal');
+                const backdrop = document.querySelector('.modal-backdrop');
+                
+                if (modal && backdrop) {
+                    modal.classList.remove('open');
+                    backdrop.classList.remove('open');
+                    modal.setAttribute('aria-hidden', 'true');
+                    console.log('Team modal closed successfully');
+                }
+            } catch (error) {
+                console.error('Error closing team modal:', error);
+            }
+        }
+
+        function closeAllModals() {
+            closeBetaModal();
+            closeTeamModal();
+        }
+
+        // Slideshow Functions
+        function updateSlideshow() {
+            try {
+                const slides = document.getElementById('slides');
+                const dots = document.querySelectorAll('.dot');
+                
+                if (slides) {
+                    const offset = -currentSlideIndex * 100;
+                    slides.style.transform = `translateX(${offset}%)`;
+                }
+                
+                // Update dots
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentSlideIndex);
+                });
+                
+                // Update caption
+                const slideInfo = slideData[currentSlideIndex];
+                const titleEl = document.getElementById('caption-title');
+                const textEl = document.getElementById('caption-text');
+                if (titleEl) titleEl.textContent = slideInfo.title;
+                if (textEl) textEl.textContent = slideInfo.text;
+                
+            } catch (error) {
+                console.error('Error updating slideshow:', error);
+            }
+        }
+
+        function changeSlide(direction) {
+            console.log('Changing slide by:', direction);
+            try {
+                currentSlideIndex += direction;
+                
+                if (currentSlideIndex >= slideData.length) {
+                    currentSlideIndex = 0;
+                } else if (currentSlideIndex < 0) {
+                    currentSlideIndex = slideData.length - 1;
+                }
+                
+                updateSlideshow();
+                
+                // Reset the auto-advance timer
+                resetSlideshowTimer();
+            } catch (error) {
+                console.error('Error changing slide:', error);
+            }
+        }
+
+        function goToSlide(index) {
+            console.log('Going to slide:', index);
+            try {
+                currentSlideIndex = index;
+                updateSlideshow();
+                
+                // Reset the auto-advance timer
+                resetSlideshowTimer();
+            } catch (error) {
+                console.error('Error going to slide:', error);
+            }
+        }
+
+        function startSlideshowTimer() {
+            if (slideshowInterval) {
+                clearInterval(slideshowInterval);
+            }
+            slideshowInterval = setInterval(function() {
+                changeSlide(1);
+            }, 5000);
+        }
+
+        function resetSlideshowTimer() {
+            startSlideshowTimer();
+        }
+
+        function stopSlideshowTimer() {
+            if (slideshowInterval) {
+                clearInterval(slideshowInterval);
+                slideshowInterval = null;
+            }
+        }
+
+        // Form submission - placeholder function
+        async function handleFormSubmit(event) {
+            console.log('Form submitted');
+            event.preventDefault();
+            
+            // Placeholder - implement your form submission logic here
+            const successMsg = document.getElementById('beta-success');
+            successMsg.innerHTML = '<div style="display:flex;align-items:center;gap:12px;color:#218838"><span>✓</span><span>Thanks! We\'ll be in touch soon.</span></div>';
+            successMsg.style.display = 'block';
+            
+            const form = document.getElementById('beta-form');
+            form.reset();
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            
+            // Initialize slideshow
+            updateSlideshow();
+            
+            // Start auto-advance slideshow
+            startSlideshowTimer();
+
+            // Add hover listeners to pause/resume slideshow
+            const slideshowContainer = document.querySelector('.slideshow-container');
+            if (slideshowContainer) {
+                slideshowContainer.addEventListener('mouseenter', stopSlideshowTimer);
+                slideshowContainer.addEventListener('mouseleave', startSlideshowTimer);
+            }
+
+            // Parallax effect for sketches
+            const sketches = document.querySelectorAll('.sketch');
+            
+            let ticking = false;
+            
+            function updateParallax() {
+                try {
+                    const scrolled = window.pageYOffset;
+                    
+                    sketches.forEach(function(sketch, index) {
+                        const speed = index % 2 === 0 ? 0.15 : 0.25;
+                        const yPos = -(scrolled * speed);
+                        sketch.style.transform = `translateY(${yPos}px)`;
+                    });
+                } catch (error) {
+                    console.error('Error in parallax effect:', error);
+                }
+                
+                ticking = false;
+            }
+            
+            function requestParallaxUpdate() {
+                if (!ticking) {
+                    requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            }
+            
+            window.addEventListener('scroll', requestParallaxUpdate, { passive: true });
+
+            console.log('All functionality initialized successfully!');
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAllModals();
+            }
+        });
+
+        // Stop slideshow when page is hidden
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopSlideshowTimer();
+            } else {
+                startSlideshowTimer();
+            }
+        });
+
+        console.log('JavaScript loaded successfully!');
+    </script>
+<div class="sketches-container">
+    <!-- LEFT SIDE PLANETS -->
+    <div class="sketch sketch-planet left-1 float-up">
+        <div class="planet-surface gas-giant">
+            <div class="gas-bands"></div>
+            <div class="storm-spot"></div>
+        </div>
+    </div>
+    
+    <div class="sketch sketch-planet left-2 float-down" style="animation-delay: 0.8s;">
+        <div class="planet-surface rocky-planet">
+            <div class="crater crater-1"></div>
+            <div class="crater crater-2"></div>
+        </div>
+    </div>
+    
+    <div class="sketch sketch-planet left-3 float-up" style="animation-delay: 1.5s;">
+        <div class="planet-surface ice-planet"></div>
+        <div class="planet-ring"></div>
+    </div>
+    
+    <div class="sketch asteroid-belt left-4 float-down" style="animation-delay: 2.2s;">
+        <div class="asteroid asteroid-1"></div>
+        <div class="asteroid asteroid-2"></div>
+        <div class="asteroid asteroid-3"></div>
+    </div>
+
+    <div class="sketch sketch-planet left-5 float-up" style="animation-delay: 0.3s;">
+        <div class="planet-surface desert-planet">
+            <div class="sand-dunes"></div>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE PLANETS -->
+    <div class="sketch sketch-planet right-1 float-down" style="animation-delay: 0.5s;">
+        <div class="planet-surface lava-planet">
+            <div class="lava-flows"></div>
+            <div class="volcanic-activity"></div>
+        </div>
+    </div>
+    
+    <div class="sketch sketch-planet right-2 float-up" style="animation-delay: 1.2s;">
+        <div class="planet-surface ocean-planet">
+            <div class="continent continent-1"></div>
+            <div class="continent continent-2"></div>
+        </div>
+        <div class="small-moon"></div>
+    </div>
+    
+    <div class="sketch sketch-planet right-3 float-down" style="animation-delay: 1.9s;">
+        <div class="planet-surface purple-giant">
+            <div class="atmospheric-layers"></div>
+        </div>
+        <div class="planet-ring diagonal-ring"></div>
+    </div>
+
+    <div class="sketch sketch-planet right-4 float-up" style="animation-delay: 2.6s;">
+        <div class="planet-surface forest-planet">
+            <div class="landmass landmass-1"></div>
+            <div class="landmass landmass-2"></div>
+        </div>
+    </div>
+
+    <div class="sketch binary-system right-5 float-down" style="animation-delay: 0.9s;">
+        <div class="planet-surface twin-1"></div>
+        <div class="planet-surface twin-2"></div>
+        <div class="orbital-path"></div>
+    </div>
+
+    <!-- CENTER SCATTERED OBJECTS -->
+    <div class="sketch comet center-1 float-up" style="animation-delay: 3.2s;">
+        <div class="comet-core"></div>
+        <div class="comet-tail"></div>
+    </div>
+
+    <div class="sketch sketch-planet center-2 float-down" style="animation-delay: 1.7s;">
+        <div class="planet-surface crystal-planet">
+            <div class="crystal-formation crystal-1"></div>
+            <div class="crystal-formation crystal-2"></div>
+        </div>
+    </div>
+
+    <div class="sketch space-station center-3 float-up" style="animation-delay: 2.4s;">
+        <div class="station-core"></div>
+        <div class="station-ring"></div>
+        <div class="docking-ports"></div>
+    </div>
+</div>
+
+
+
+<style>
+/* EXPLICIT LEFT SIDE POSITIONING */
+.left-1 { 
+    width: 180px; 
+    height: 180px; 
+    position: absolute;
+    left: 2% !important; 
+    top: 10% !important; 
+}
+
+.left-2 { 
+    width: 140px; 
+    height: 140px; 
+    position: absolute;
+    left: 6% !important; 
+    top: 40% !important; 
+}
+
+.left-3 { 
+    width: 160px; 
+    height: 160px; 
+    position: absolute;
+    left: 1% !important; 
+    top: 70% !important; 
+}
+
+.left-4 { 
+    width: 120px; 
+    height: 120px; 
+    position: absolute;
+    left: 8% !important; 
+    top: 25% !important; 
+}
+
+.left-5 { 
+    width: 100px; 
+    height: 100px; 
+    position: absolute;
+    left: 4% !important; 
+    top: 85% !important; 
+}
+
+/* EXPLICIT RIGHT SIDE POSITIONING */
+.right-1 { 
+    width: 170px; 
+    height: 170px; 
+    position: absolute;
+    right: 3% !important; 
+    top: 8% !important; 
+}
+
+.right-2 { 
+    width: 150px; 
+    height: 150px; 
+    position: absolute;
+    right: 7% !important; 
+    top: 35% !important; 
+}
+
+.right-3 { 
+    width: 190px; 
+    height: 190px; 
+    position: absolute;
+    right: 2% !important; 
+    top: 60% !important; 
+}
+
+.right-4 { 
+    width: 130px; 
+    height: 130px; 
+    position: absolute;
+    right: 9% !important; 
+    top: 80% !important; 
+}
+
+.right-5 { 
+    width: 160px; 
+    height: 110px; 
+    position: absolute;
+    right: 5% !important; 
+    top: 15% !important; 
+}
+
+/* CENTER POSITIONING */
+.center-1 { 
+    width: 140px; 
+    height: 80px; 
+    position: absolute;
+    left: 35% !important; 
+    top: 12% !important; 
+}
+
+.center-2 { 
+    width: 110px; 
+    height: 110px; 
+    position: absolute;
+    right: 30% !important; 
+    top: 45% !important; 
+}
+
+.center-3 { 
+    width: 120px; 
+    height: 120px; 
+    position: absolute;
+    left: 40% !important; 
+    top: 75% !important; 
+}
+
+/* Planet Surface Styles */
+.gas-giant {
+    background: 
+        linear-gradient(45deg, transparent 30%, rgba(107, 70, 193, 0.06) 50%, transparent 70%),
+        linear-gradient(135deg, rgba(107, 70, 193, 0.04) 20%, transparent 40%, rgba(107, 70, 193, 0.08) 80%);
+}
+
+.gas-bands {
+    position: absolute;
+    width: 100%;
+    height: 20%;
+    top: 40%;
+    background: linear-gradient(90deg, 
+        transparent 10%, 
+        rgba(107, 70, 193, 0.1) 30%, 
+        rgba(107, 70, 193, 0.05) 50%, 
+        rgba(107, 70, 193, 0.1) 70%, 
+        transparent 90%);
+    border-radius: 50%;
+}
+
+.storm-spot {
+    position: absolute;
+    width: 25%;
+    height: 35%;
+    top: 30%;
+    right: 20%;
+    background: rgba(107, 70, 193, 0.08);
+    border-radius: 50%;
+    border: 1px solid rgba(107, 70, 193, 0.15);
+}
+
+.rocky-planet {
+    background: 
+        radial-gradient(circle at 25% 25%, transparent 15%, rgba(107, 70, 193, 0.04) 40%),
+        radial-gradient(circle at 75% 60%, transparent 20%, rgba(107, 70, 193, 0.06) 50%);
+}
+
+.crater {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(107, 70, 193, 0.12);
+    background: rgba(107, 70, 193, 0.03);
+}
+
+.crater-1 { width: 20%; height: 20%; top: 25%; left: 30%; }
+.crater-2 { width: 15%; height: 15%; top: 55%; left: 60%; }
+
+.ice-planet {
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(107, 70, 193, 0.02) 20%, transparent 50%),
+        linear-gradient(45deg, transparent 40%, rgba(107, 70, 193, 0.04) 60%, transparent 80%);
+    border: 1px solid rgba(107, 70, 193, 0.08);
+}
+
+.desert-planet {
+    background: 
+        radial-gradient(ellipse at 40% 20%, transparent 30%, rgba(107, 70, 193, 0.05) 70%),
+        linear-gradient(30deg, rgba(107, 70, 193, 0.03) 30%, transparent 70%);
+}
+
+.sand-dunes {
+    position: absolute;
+    width: 80%;
+    height: 40%;
+    bottom: 20%;
+    left: 10%;
+    background: linear-gradient(180deg, transparent 0%, rgba(107, 70, 193, 0.06) 100%);
+    border-radius: 0 0 50% 50%;
+}
+
+.lava-planet {
+    background: 
+        radial-gradient(circle at 60% 40%, rgba(107, 70, 193, 0.08) 20%, transparent 50%),
+        linear-gradient(135deg, rgba(107, 70, 193, 0.06) 30%, transparent 70%);
+}
+
+.lava-flows {
+    position: absolute;
+    width: 40%;
+    height: 60%;
+    top: 20%;
+    right: 15%;
+    background: linear-gradient(45deg, 
+        transparent 20%, 
+        rgba(107, 70, 193, 0.1) 40%, 
+        transparent 60%);
+    border-radius: 20% 80% 60% 40% / 30% 70% 30% 70%;
+}
+
+.volcanic-activity {
+    position: absolute;
+    width: 15%;
+    height: 15%;
+    top: 30%;
+    right: 25%;
+    background: rgba(107, 70, 193, 0.12);
+    border-radius: 50%;
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.ocean-planet {
+    background: 
+        radial-gradient(circle at 40% 30%, rgba(107, 70, 193, 0.03) 30%, transparent 60%),
+        linear-gradient(90deg, rgba(107, 70, 193, 0.02) 20%, transparent 80%);
+}
+
+.continent {
+    position: absolute;
+    background: rgba(107, 70, 193, 0.06);
+    border: 1px solid rgba(107, 70, 193, 0.08);
+}
+
+.continent-1 {
+    width: 35%;
+    height: 45%;
+    top: 20%;
+    left: 15%;
+    border-radius: 40% 60% 30% 70% / 50% 30% 70% 50%;
+}
+
+.continent-2 {
+    width: 25%;
+    height: 30%;
+    bottom: 25%;
+    right: 20%;
+    border-radius: 60% 40% 70% 30% / 40% 60% 40% 60%;
+}
+
+.small-moon {
+    position: absolute;
+    width: 20%;
+    height: 20%;
+    top: -10%;
+    right: -10%;
+    background: rgba(107, 70, 193, 0.04);
+    border: 1px solid rgba(107, 70, 193, 0.1);
+    border-radius: 50%;
+}
+
+.purple-giant {
+    background: 
+        radial-gradient(circle at 30% 70%, rgba(107, 70, 193, 0.08) 20%, transparent 60%),
+        linear-gradient(45deg, rgba(107, 70, 193, 0.05) 40%, transparent 80%);
+}
+
+.atmospheric-layers {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    top: 5%;
+    left: 5%;
+    background: linear-gradient(180deg, 
+        transparent 20%, 
+        rgba(107, 70, 193, 0.03) 40%, 
+        rgba(107, 70, 193, 0.06) 60%, 
+        rgba(107, 70, 193, 0.03) 80%, 
+        transparent 100%);
+    border-radius: 50%;
+}
+
+.diagonal-ring {
+    transform: translate(-50%, -50%) rotateX(75deg) rotateZ(30deg);
+}
+
+.forest-planet {
+    background: 
+        radial-gradient(circle at 50% 50%, rgba(107, 70, 193, 0.04) 30%, transparent 70%),
+        linear-gradient(120deg, rgba(107, 70, 193, 0.02) 50%, transparent 90%);
+}
+
+.landmass {
+    position: absolute;
+    background: rgba(107, 70, 193, 0.07);
+    border: 1px solid rgba(107, 70, 193, 0.1);
+}
+
+.landmass-1 {
+    width: 40%;
+    height: 50%;
+    top: 15%;
+    left: 30%;
+    border-radius: 50% 30% 60% 40% / 40% 70% 30% 60%;
+}
+
+.landmass-2 {
+    width: 30%;
+    height: 35%;
+    bottom: 20%;
+    right: 25%;
+    border-radius: 30% 50% 40% 60% / 60% 40% 70% 30%;
+}
+
+/* Asteroid Belt */
+.asteroid-belt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.asteroid {
+    position: absolute;
+    background: rgba(107, 70, 193, 0.04);
+    border: 1px solid rgba(107, 70, 193, 0.1);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+
+.asteroid-1 { width: 25px; height: 20px; top: -15px; left: -30px; transform: rotate(15deg); }
+.asteroid-2 { width: 18px; height: 22px; top: 10px; right: -25px; transform: rotate(-30deg); }
+.asteroid-3 { width: 20px; height: 16px; bottom: -10px; left: -15px; transform: rotate(45deg); }
+
+/* Binary System */
+.binary-system {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.twin-1, .twin-2 {
+    width: 40%;
+    height: 70%;
+    border-radius: 50%;
+    border: 1px solid rgba(107, 70, 193, 0.1);
+    background: rgba(107, 70, 193, 0.04);
+    position: absolute;
+}
+
+.twin-1 { left: 10%; }
+.twin-2 { right: 10%; }
+
+.orbital-path {
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    border: 1px dashed rgba(107, 70, 193, 0.08);
+    border-radius: 50%;
+}
+
+/* Comet */
+.comet {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.comet-core {
+    width: 15px;
+    height: 15px;
+    background: rgba(107, 70, 193, 0.08);
+    border: 1px solid rgba(107, 70, 193, 0.15);
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+}
+
+.comet-tail {
+    width: 80px;
+    height: 20px;
+    background: linear-gradient(90deg, 
+        rgba(107, 70, 193, 0.06) 0%, 
+        rgba(107, 70, 193, 0.03) 50%, 
+        transparent 100%);
+    border-radius: 50px 0 0 50px;
+    position: absolute;
+    right: 10px;
+    z-index: 1;
+}
+
+/* Crystal Planet */
+.crystal-planet {
+    background: 
+        radial-gradient(circle at 40% 60%, rgba(107, 70, 193, 0.05) 30%, transparent 70%);
+}
+
+.crystal-formation {
+    position: absolute;
+    background: rgba(107, 70, 193, 0.08);
+    border: 1px solid rgba(107, 70, 193, 0.12);
+}
+
+.crystal-1 {
+    width: 25%;
+    height: 40%;
+    top: 30%;
+    left: 20%;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.crystal-2 {
+    width: 20%;
+    height: 35%;
+    top: 25%;
+    right: 25%;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* Space Station */
+.space-station {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.station-core {
+    width: 25%;
+    height: 25%;
+    background: rgba(107, 70, 193, 0.06);
+    border: 1px solid rgba(107, 70, 193, 0.12);
+    border-radius: 10%;
+    position: relative;
+    z-index: 2;
+}
+
+.station-ring {
+    width: 70%;
+    height: 70%;
+    border: 2px solid rgba(107, 70, 193, 0.1);
+    border-radius: 50%;
+    position: absolute;
+    animation: rotate 15s linear infinite;
+}
+
+.docking-ports {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.docking-ports::before,
+.docking-ports::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(107, 70, 193, 0.08);
+    border: 1px solid rgba(107, 70, 193, 0.12);
+    border-radius: 50%;
+}
+
+.docking-ports::before {
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.docking-ports::after {
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes float-up {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes float-down {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(20px); }
+    100% { transform: translateY(0px); }
+}
+
+.float-up {
+    animation: float-up 4s ease-in-out infinite;
+}
+
+.float-down {
+    animation: float-down 4s ease-in-out infinite;
+}
+
+/* Override any existing sketch positioning */
+.sketch {
+    position: absolute !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: transform 0.3s ease-out !important;
+}
+
+</style>
+</body>
+</html>
